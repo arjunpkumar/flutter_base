@@ -1,0 +1,93 @@
+import 'package:connectivity/connectivity.dart';
+import 'package:device_info/device_info.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:local_auth/local_auth.dart';
+import 'package:thinkhub/src/domain/auth/auth_repository.dart';
+import 'package:thinkhub/src/domain/auth/auth_service.dart';
+import 'package:thinkhub/src/domain/auth/user_repository.dart';
+import 'package:thinkhub/src/domain/auth/user_service.dart';
+import 'package:thinkhub/src/domain/core/config_repository.dart';
+import 'package:thinkhub/src/domain/core/log_services.dart';
+import 'package:thinkhub/src/domain/database/auth_settings_dao.dart';
+import 'package:thinkhub/src/domain/database/core/app_database.dart';
+import 'package:thinkhub/src/domain/fcm/device_token_repository.dart';
+import 'package:thinkhub/src/domain/fcm/device_token_service.dart';
+import 'package:thinkhub/src/utils/biometric_local_auth_utils.dart';
+import 'package:thinkhub/src/utils/file_downloader.dart';
+import 'package:thinkhub/src/utils/network_validator.dart';
+
+ConfigRepository provideConfigRepository() {
+  return ConfigRepository.instance;
+}
+
+FlutterSecureStorage provideFlutterSecureStorage() {
+  return const FlutterSecureStorage();
+}
+
+Logger provideLogger() {
+  return Logger();
+}
+
+NetworkValidator provideNetworkValidator() {
+  return NetworkValidator.instance ??= NetworkValidator(
+    connectivity: Connectivity(),
+  );
+}
+
+AppDatabase provideAppDatabase() {
+  return AppDatabase.instance();
+}
+
+AuthRepository provideAuthRepository() {
+  return AuthRepository.instance ??= AuthRepository(
+    authServices: AuthService(),
+    authTokenDao: provideAppDatabase().authTokenDao,
+    appDatabase: provideAppDatabase(),
+    authSettingsDao: AuthSettingsDao(),
+    userRepository: provideUserRepository(),
+    storage: provideFlutterSecureStorage(),
+    logger: provideLogger(),
+  );
+}
+
+UserRepository provideUserRepository() {
+  return UserRepository.instance ??= UserRepository(
+    userDao: provideAppDatabase().userDao,
+    networkProvider: UserService(),
+    userMapper: UserMapper(),
+  );
+}
+
+DeviceTokenRepository provideDeviceTokenRepository() {
+  return DeviceTokenRepository(
+    messagingService: provideFireBaseMessaging(),
+    tokenServices: provideDeviceTokenServices(),
+    flutterSecureStorage: provideFlutterSecureStorage(),
+  );
+}
+
+FirebaseMessaging provideFireBaseMessaging() {
+  return FirebaseMessaging.instance;
+}
+
+DeviceTokenService provideDeviceTokenServices() {
+  return DeviceTokenService();
+}
+
+FileDownloader provideFileDownloader() {
+  return FileDownloader(
+    authRepository: provideAuthRepository(),
+  );
+}
+
+BiometricLocalAuthUtils provideBiometricLocalAuthUtils() {
+  return BiometricLocalAuthUtils(
+    localAuthentication: provideLocalAuthentication(),
+    deviceInfoPlugin: DeviceInfoPlugin(),
+  );
+}
+
+LocalAuthentication provideLocalAuthentication() {
+  return LocalAuthentication();
+}
