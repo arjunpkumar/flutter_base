@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:thinkhub/src/presentation/theme/colors.dart';
-import 'package:thinkhub/src/presentation/theme/text_styles.dart';
+import 'package:thinkhub/src/presentation/core/theme/colors.dart';
+import 'package:thinkhub/src/presentation/core/theme/text_styles.dart';
 
 ThemeData getAppThemeData(BuildContext context) {
   return Theme.of(context).copyWith(

@@ -5,18 +5,21 @@ import 'package:provider/provider.dart';
 import 'package:thinkhub/generated/l10n.dart';
 import 'package:thinkhub/src/application/core/process_state.dart';
 import 'package:thinkhub/src/application/web_view/web_view_bloc.dart';
-import 'package:thinkhub/src/presentation/theme/colors.dart';
+import 'package:thinkhub/src/presentation/core/base_state.dart';
+import 'package:thinkhub/src/presentation/core/theme/colors.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class WebViewPage extends StatefulWidget {
   static const route = "web_view";
 
+  const WebViewPage({super.key});
+
   @override
-  _WebViewPageState createState() => _WebViewPageState();
+  State<WebViewPage> createState() => _WebViewPageState();
 }
 
-class _WebViewPageState extends State<WebViewPage> {
+class _WebViewPageState extends BaseState<WebViewPage> {
   WebViewArgument? arguments;
 
   WebViewBloc? _bloc;

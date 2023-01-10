@@ -22,7 +22,7 @@ import 'package:thinkhub/src/core/routes.dart';
 import 'package:thinkhub/src/domain/core/config_repository.dart';
 import 'package:thinkhub/src/domain/core/log_services.dart';
 import 'package:thinkhub/src/domain/core/repository_provider.dart';
-import 'package:thinkhub/src/presentation/theme/text_styles.dart';
+import 'package:thinkhub/src/presentation/core/theme/text_styles.dart';
 import 'package:thinkhub/src/presentation/widgets/app_version_widget.dart';
 import 'package:thinkhub/src/utils/deeplink_handler.dart';
 import 'package:thinkhub/src/utils/deeplink_navigator.dart';
