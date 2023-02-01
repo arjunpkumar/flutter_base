@@ -126,7 +126,7 @@ class Staging extends Flavor {
       ConfigRepository.instance.identityServerUrlStaging;
 
   @override
-  String get authRedirectUri => ConfigRepository.instance.authRedirectUriProd;
+  String get authRedirectUri => ConfigRepository.instance.authRedirectUriStaging;
 
   @override
   int get androidMinVersionCode =>

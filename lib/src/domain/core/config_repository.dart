@@ -110,6 +110,15 @@ class ConfigRepository {
 
   String get restHeadsUrl => _config.getString('rest_heads_url');
 
+  String get restEmployeeBasicDetailsUrl =>
+      _config.getString('rest_employee_basic_details_url');
+
+  String get restLeaveEntitlementUrl =>
+      _config.getString('rest_leave_entitlement_url');
+
+  String get restLeaveRequestListUrl =>
+      _config.getString('rest_leave_request_list_url');
+
   /*-----------------------------------------------------------------*/
 
   // APP UPDATE RELATED CONFIGS
