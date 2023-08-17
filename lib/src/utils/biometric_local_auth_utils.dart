@@ -1,9 +1,9 @@
 import 'dart:io';
 
 import 'package:app_settings/app_settings.dart';
-import 'package:device_info/device_info.dart';
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter_base/generated/l10n.dart';
 import 'package:local_auth/local_auth.dart';
-import 'package:thinkhub/generated/l10n.dart';
 
 class BiometricLocalAuthUtils {
   final LocalAuthentication localAuthentication;
@@ -19,7 +19,7 @@ class BiometricLocalAuthUtils {
   }
 
   Future<void> openDeviceSecuritySettings() async {
-    await AppSettings.openSecuritySettings();
+    await AppSettings.openAppSettings(type: AppSettingsType.security);
   }
 
   Future<bool> authenticate() async {

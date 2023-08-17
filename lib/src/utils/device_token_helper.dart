@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
-import 'package:thinkhub/src/domain/auth/user_repository.dart';
-import 'package:thinkhub/src/domain/core/log_services.dart';
-import 'package:thinkhub/src/domain/fcm/device_token_repository.dart';
-import 'package:thinkhub/src/utils/extensions.dart';
+import 'package:flutter_base/src/domain/auth/user_repository.dart';
+import 'package:flutter_base/src/domain/core/log_services.dart';
+import 'package:flutter_base/src/domain/fcm/device_token_repository.dart';
+import 'package:flutter_base/src/utils/extensions.dart';
 
 class DeviceTokenHelper {
   final DeviceTokenRepository deviceTokenRepository;

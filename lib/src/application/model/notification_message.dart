@@ -54,9 +54,9 @@ class NotificationMessage {
   int get unreadCount {
     int count = 0;
     if (Platform.isIOS) {
-      count = int.tryParse(message.data['badge_count'] ?? '') ?? 0;
+      count = int.tryParse(message.data['badge_count']?.toString() ?? '') ?? 0;
     } else if (Platform.isAndroid) {
-      count = int.tryParse(message.data['badge_count'] ?? '') ?? 0;
+      count = int.tryParse(message.data['badge_count']?.toString() ?? '') ?? 0;
     }
     return count;
   }

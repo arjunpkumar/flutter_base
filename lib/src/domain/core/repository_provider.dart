@@ -1,24 +1,24 @@
-import 'package:connectivity/connectivity.dart';
-import 'package:device_info/device_info.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_base/src/domain/auth/auth_repository.dart';
+import 'package:flutter_base/src/domain/auth/auth_service.dart';
+import 'package:flutter_base/src/domain/auth/user_repository.dart';
+import 'package:flutter_base/src/domain/auth/user_service.dart';
+import 'package:flutter_base/src/domain/core/config_repository.dart';
+import 'package:flutter_base/src/domain/core/log_services.dart';
+import 'package:flutter_base/src/domain/database/auth_settings_dao.dart';
+import 'package:flutter_base/src/domain/database/core/app_database.dart';
+import 'package:flutter_base/src/domain/fcm/device_token_repository.dart';
+import 'package:flutter_base/src/domain/fcm/device_token_service.dart';
+import 'package:flutter_base/src/utils/biometric_local_auth_utils.dart';
+import 'package:flutter_base/src/utils/file_downloader.dart';
+import 'package:flutter_base/src/utils/network_validator.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:local_auth/local_auth.dart';
-import 'package:thinkhub/src/domain/auth/auth_repository.dart';
-import 'package:thinkhub/src/domain/auth/auth_service.dart';
-import 'package:thinkhub/src/domain/auth/user_repository.dart';
-import 'package:thinkhub/src/domain/auth/user_service.dart';
-import 'package:thinkhub/src/domain/core/config_repository.dart';
-import 'package:thinkhub/src/domain/core/log_services.dart';
-import 'package:thinkhub/src/domain/database/auth_settings_dao.dart';
-import 'package:thinkhub/src/domain/database/core/app_database.dart';
-import 'package:thinkhub/src/domain/fcm/device_token_repository.dart';
-import 'package:thinkhub/src/domain/fcm/device_token_service.dart';
-import 'package:thinkhub/src/utils/biometric_local_auth_utils.dart';
-import 'package:thinkhub/src/utils/file_downloader.dart';
-import 'package:thinkhub/src/utils/network_validator.dart';
 
 ConfigRepository provideConfigRepository() {
-  return ConfigRepository.instance;
+  return ConfigRepository.instance();
 }
 
 FlutterSecureStorage provideFlutterSecureStorage() {
@@ -39,6 +39,12 @@ AppDatabase provideAppDatabase() {
   return AppDatabase.instance();
 }
 
+UserService provideUserService() {
+  return UserService(
+    configRepository: provideConfigRepository(),
+  );
+}
+
 AuthRepository provideAuthRepository() {
   return AuthRepository.instance ??= AuthRepository(
     authServices: AuthService(),
@@ -48,13 +54,14 @@ AuthRepository provideAuthRepository() {
     userRepository: provideUserRepository(),
     storage: provideFlutterSecureStorage(),
     logger: provideLogger(),
+    configRepository: provideConfigRepository(),
   );
 }
 
 UserRepository provideUserRepository() {
   return UserRepository.instance ??= UserRepository(
     userDao: provideAppDatabase().userDao,
-    networkProvider: UserService(),
+    networkProvider: provideUserService(),
     userMapper: UserMapper(),
   );
 }

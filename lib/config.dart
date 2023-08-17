@@ -1,5 +1,10 @@
-import 'package:package_info/package_info.dart';
-import 'package:thinkhub/src/domain/core/config_repository.dart';
+import 'dart:io';
+
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_base/src/domain/core/config_repository.dart';
+import 'package:flutter_base/src/utils/network_utils.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 abstract class Flavor {
   String get name;
@@ -33,41 +38,41 @@ class Development extends Flavor {
 
   @override
   String get restBaseUrl =>
-      ConfigRepository.instance.restBaseUrlDev + restApiVersion;
+      ConfigRepository.instance().restBaseUrlDev + restApiVersion;
 
   @override
   String get identityServerBaseUrl =>
-      ConfigRepository.instance.identityServerUrlDev;
+      ConfigRepository.instance().identityServerUrlDev;
 
   @override
-  String get authRedirectUri => ConfigRepository.instance.authRedirectUriDev;
+  String get authRedirectUri => ConfigRepository.instance().authRedirectUriDev;
 
   @override
   int get androidMinVersionCode =>
-      ConfigRepository.instance.androidMinVersionCodeDev;
+      ConfigRepository.instance().androidMinVersionCodeDev;
 
   @override
   int get androidLatestVersionCode =>
-      ConfigRepository.instance.androidLatestVersionCodeDev;
+      ConfigRepository.instance().androidLatestVersionCodeDev;
 
   @override
-  int get iOSMinVersionCode => ConfigRepository.instance.iOSMinVersionCodeDev;
+  int get iOSMinVersionCode => ConfigRepository.instance().iOSMinVersionCodeDev;
 
   @override
   int get iOSLatestVersionCode =>
-      ConfigRepository.instance.iOSLatestVersionCodeDev;
+      ConfigRepository.instance().iOSLatestVersionCodeDev;
 
   @override
   String get restApiVersion => "";
 
   @override
-  String get clientID => ConfigRepository.instance.clientIDDev;
+  String get clientID => ConfigRepository.instance().clientIDDev;
 
   @override
-  String get clientSecret => ConfigRepository.instance.clientSecretDev;
+  String get clientSecret => ConfigRepository.instance().clientSecretDev;
 
   @override
-  String get tenantID => ConfigRepository.instance.tenantIDDev;
+  String get tenantID => ConfigRepository.instance().tenantIDDev;
 }
 
 class QA extends Flavor {
@@ -76,41 +81,41 @@ class QA extends Flavor {
 
   @override
   String get restBaseUrl =>
-      ConfigRepository.instance.restBaseUrlQA + restApiVersion;
+      ConfigRepository.instance().restBaseUrlQA + restApiVersion;
 
   @override
   String get identityServerBaseUrl =>
-      ConfigRepository.instance.identityServerUrlQA;
+      ConfigRepository.instance().identityServerUrlQA;
 
   @override
-  String get authRedirectUri => ConfigRepository.instance.authRedirectUriDev;
+  String get authRedirectUri => ConfigRepository.instance().authRedirectUriDev;
 
   @override
   int get androidMinVersionCode =>
-      ConfigRepository.instance.androidMinVersionCodeQA;
+      ConfigRepository.instance().androidMinVersionCodeQA;
 
   @override
   int get androidLatestVersionCode =>
-      ConfigRepository.instance.androidLatestVersionCodeQA;
+      ConfigRepository.instance().androidLatestVersionCodeQA;
 
   @override
-  int get iOSMinVersionCode => ConfigRepository.instance.iOSMinVersionCodeQA;
+  int get iOSMinVersionCode => ConfigRepository.instance().iOSMinVersionCodeQA;
 
   @override
   int get iOSLatestVersionCode =>
-      ConfigRepository.instance.iOSLatestVersionCodeQA;
+      ConfigRepository.instance().iOSLatestVersionCodeQA;
 
   @override
   String get restApiVersion => "";
 
   @override
-  String get clientID => ConfigRepository.instance.clientIDQA;
+  String get clientID => ConfigRepository.instance().clientIDQA;
 
   @override
-  String get clientSecret => ConfigRepository.instance.clientSecretQA;
+  String get clientSecret => ConfigRepository.instance().clientSecretQA;
 
   @override
-  String get tenantID => ConfigRepository.instance.tenantIDQA;
+  String get tenantID => ConfigRepository.instance().tenantIDQA;
 }
 
 class Staging extends Flavor {
@@ -119,42 +124,43 @@ class Staging extends Flavor {
 
   @override
   String get restBaseUrl =>
-      ConfigRepository.instance.restBaseUrlStaging + restApiVersion;
+      ConfigRepository.instance().restBaseUrlStaging + restApiVersion;
 
   @override
   String get identityServerBaseUrl =>
-      ConfigRepository.instance.identityServerUrlStaging;
+      ConfigRepository.instance().identityServerUrlStaging;
 
   @override
-  String get authRedirectUri => ConfigRepository.instance.authRedirectUriStaging;
+  String get authRedirectUri =>
+      ConfigRepository.instance().authRedirectUriStaging;
 
   @override
   int get androidMinVersionCode =>
-      ConfigRepository.instance.androidMinVersionCodeStaging;
+      ConfigRepository.instance().androidMinVersionCodeStaging;
 
   @override
   int get androidLatestVersionCode =>
-      ConfigRepository.instance.androidLatestVersionCodeStaging;
+      ConfigRepository.instance().androidLatestVersionCodeStaging;
 
   @override
   int get iOSMinVersionCode =>
-      ConfigRepository.instance.iOSMinVersionCodeStaging;
+      ConfigRepository.instance().iOSMinVersionCodeStaging;
 
   @override
   int get iOSLatestVersionCode =>
-      ConfigRepository.instance.iOSLatestVersionCodeStaging;
+      ConfigRepository.instance().iOSLatestVersionCodeStaging;
 
   @override
   String get restApiVersion => "";
 
   @override
-  String get clientID => ConfigRepository.instance.clientIDStaging;
+  String get clientID => ConfigRepository.instance().clientIDStaging;
 
   @override
-  String get clientSecret => ConfigRepository.instance.clientSecretStaging;
+  String get clientSecret => ConfigRepository.instance().clientSecretStaging;
 
   @override
-  String get tenantID => ConfigRepository.instance.tenantIDStaging;
+  String get tenantID => ConfigRepository.instance().tenantIDStaging;
 }
 
 class Production extends Flavor {
@@ -163,41 +169,42 @@ class Production extends Flavor {
 
   @override
   String get restBaseUrl =>
-      ConfigRepository.instance.restBaseUrlProd + restApiVersion;
+      ConfigRepository.instance().restBaseUrlProd + restApiVersion;
 
   @override
   String get identityServerBaseUrl =>
-      ConfigRepository.instance.identityServerUrlProd;
+      ConfigRepository.instance().identityServerUrlProd;
 
   @override
-  String get authRedirectUri => ConfigRepository.instance.authRedirectUriProd;
+  String get authRedirectUri => ConfigRepository.instance().authRedirectUriProd;
 
   @override
   int get androidMinVersionCode =>
-      ConfigRepository.instance.androidMinVersionCodeProd;
+      ConfigRepository.instance().androidMinVersionCodeProd;
 
   @override
   int get androidLatestVersionCode =>
-      ConfigRepository.instance.androidLatestVersionCodeProd;
+      ConfigRepository.instance().androidLatestVersionCodeProd;
 
   @override
-  int get iOSMinVersionCode => ConfigRepository.instance.iOSMinVersionCodeProd;
+  int get iOSMinVersionCode =>
+      ConfigRepository.instance().iOSMinVersionCodeProd;
 
   @override
   int get iOSLatestVersionCode =>
-      ConfigRepository.instance.iOSLatestVersionCodeProd;
+      ConfigRepository.instance().iOSLatestVersionCodeProd;
 
   @override
   String get restApiVersion => "";
 
   @override
-  String get clientID => ConfigRepository.instance.clientIDProd;
+  String get clientID => ConfigRepository.instance().clientIDProd;
 
   @override
-  String get clientSecret => ConfigRepository.instance.clientSecretProd;
+  String get clientSecret => ConfigRepository.instance().clientSecretProd;
 
   @override
-  String get tenantID => ConfigRepository.instance.tenantIDProd;
+  String get tenantID => ConfigRepository.instance().tenantIDProd;
 }
 
 enum AppMode {
@@ -210,12 +217,21 @@ class Config {
   Config._();
 
   static late Flavor appFlavor;
+  static String? _appSource;
   static PackageInfo? packageInfo;
+  static IosDeviceInfo? iOSDeviceInfo;
+  static AndroidDeviceInfo? androidDeviceInfo;
   static AppMode appMode = _getCurrentMode();
 
   static String getVersionName() {
     return packageInfo?.version ?? "";
   }
+
+  static String getBuildNumber() {
+    return packageInfo?.buildNumber ?? "";
+  }
+
+  static String get appSource => _appSource ?? _getAppSource();
 
   static AppMode _getCurrentMode() {
     AppMode mode;
@@ -232,5 +248,15 @@ class Config {
     }
 
     return mode;
+  }
+
+  static String _getAppSource() {
+    if (kIsWeb) return AppSource.web;
+    if (Platform.isAndroid || Platform.isFuchsia) return AppSource.android;
+    if (Platform.isIOS) return AppSource.iOS;
+    if (Platform.isMacOS) return AppSource.macOS;
+    if (Platform.isWindows) return AppSource.windows;
+    if (Platform.isLinux) return AppSource.linux;
+    return "";
   }
 }

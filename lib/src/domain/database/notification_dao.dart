@@ -1,5 +1,5 @@
 import 'package:drift/drift.dart';
-import 'package:thinkhub/src/domain/database/core/app_database.dart';
+import 'package:flutter_base/src/domain/database/core/app_database.dart';
 
 part 'notification_dao.g.dart';
 
@@ -8,7 +8,7 @@ part 'notification_dao.g.dart';
 )
 class NotificationDao extends DatabaseAccessor<AppDatabase>
     with _$NotificationDaoMixin {
-  NotificationDao(AppDatabase db) : super(db);
+  NotificationDao(super.db);
 
   Stream<List<NotificationData>> watchNotifications() {
     return (select(notifications)
@@ -60,10 +60,10 @@ class NotificationDao extends DatabaseAccessor<AppDatabase>
     }
   }
 
-  Future<int> getNotificationCount() async {
-    var countExp = notifications.id.count();
+  Future<int?> getNotificationCount() async {
+    final countExp = notifications.id.count();
     final query = selectOnly(notifications)..addColumns([countExp]);
-    return query.map((row) => row.read(countExp)).getSingle();
+    return query.map((row) => row.read(countExp)).getSingleOrNull();
   }
 
   Future<void> saveNotifications(List<NotificationData> notificationList) {

@@ -15,13 +15,27 @@ class HexColor extends Color {
 class AppColors {
   AppColors._();
 
+  static const Color mildBlue = Color(0xFF5D76A8);
   static const Color transparent = Color(0x00000000);
   static const Color white = Color(0xFFFFFFFF);
   static const Color black = Color(0xFF000000);
+  static const Color lightBlack = Color(0xFF454545);
+  static const Color extraLightBlack = Color(0xFF1A1A1A);
+  static const Color extraLightBlueShade = Color(0xFFEFF7FF);
   static const Color red = Color(0xFFF5564E);
   static const Color darkRed = Color(0xFFEB5757);
   static const Color denim = Color(0xFF1377B9);
-  static const Color lightBlack = Color(0xFF454545);
+  static const Color denimBlue = Color(0xFF124BAE);
+  static const Color lightRed = Color(0xFFE46574);
+  static const Color lightBlue = Color(0xFF64B8F1);
+  static const Color lightYellow = Color(0xFFF1B964);
+  static const Color darkWhite = Color(0xFFF9F9F9);
+  static const Color extraLightBlue = Color(0xFFC4D3F3);
+  static const Color blue = Color(0xFFC4D3F3);
+  static const Color lightGrey2 = Color(0xFFE9E9E9);
+  static const Color extraLightGrey = Color(0xFFF5F5F5);
+  static const Color blueIconColor = Color(0xFF4E87DE);
+
   static const Color darkPink = Color(0xFFE02D57);
   static const Color softPeach = Color(0xFFF2E9E8);
   static const Color parisWhite = Color(0xFFD6E6E2);
@@ -42,6 +56,7 @@ class AppColors {
   static const Color dullPink = Color(0xFFDAABB5);
   static const Color dullRose = Color(0xFFC7A3BD);
   static const Color pink = Color(0xFFAC98CD);
+  static const Color paleRed = Color(0xFFFFC5C4);
   static const Color chetWodeBlue = Color(0xFF8989E0);
   static const Color alphaBlack = Color(0x20000000);
   static const Color waxFlower = Color(0xFFFFBCA0);
@@ -79,7 +94,7 @@ class AppColors {
   static const Color mountainMeadow = Color(0xFF21C979);
   static const Color green = Color(0xFF27AE60);
   static const Color greenDarker = Color(0xFF219554);
-
+  static const Color limeGreen = Color(0xFF32CD32);
   static const Color merino = Color(0xFFFAF7F1);
   static const Color smaltBlue = Color(0xFF4E8C93);
   static const Color helpOverlay = Color(0xFF0078A4);
@@ -93,38 +108,27 @@ class AppColors {
   static const Color accent = Color(0xff2B3164);
 
   static const Color bgSplash = Color(0xff2B3164);
+  static const Color bgApp = Color(0xffF9F9F9);
   static const Color bgProfile = Color(0xffF3E9E8);
-  static const Color bgLearning = Color(0xffF2F2F2);
-  static const Color bgRead = Color(0xffa6c3a7);
-  static const Color bgLearningRead = Color(0xffD0DAAB);
 
-  static const Color bgQuizResultGreen = Color(0xff3A787E);
-  static const Color bgQuizResultYellow = Color(0xffF8E3B4);
-  static const Color bgQuizResultYellow1 = Color(0xffC9B668);
-  static const Color bgQuizResultRed = Color(0xffF8C8C5);
-  static const Color bgQuizResultRed1 = Color(0xffBA6C6D);
-
-  static const Color bgQuizOptionGreen = Color(0xffE5F4ED);
-
-  static const Color quizResultIconGreen = Color(0xff3A787E);
-  static const Color quizResultIconYellow = Color(0xffF8B113);
-  static const Color quizResultIconRed = Color(0xffF68681);
-
-  static const Color reportChatPrimary = Color(0xFF5089E6);
-  static const Color reportChatSecondary = Color(0xFF69BEF2);
-  static const Color reportChatFromColor = Color(0xFFCCE1F9);
-  static const Color reportListEyeColor = Color(0xFF8ABAFB);
-  static const Color reportListAnonymousColor = Color(0xFF666666);
-  static const Color reportListYellow = Color(0xFFF8B114);
-  static const Color reportListBlue = Color(0xFF565FBB);
-  static const Color reportListGrey = Color(0xFF828282);
-
-  static const Color feedbackYellow = Color(0xFFF8B114);
-
-  static const Color bondedStoreTotalSummary = Color(0xFFE7EBF4);
   static const Color yellow = Color(0xFFF8B114);
   static const Color blossom = Color(0xFFF0F3FB);
   static const Color blossomMauve = Color(0xFFE1E2EF);
 
-  static const Color feedbackExpiresColor = Color(0xFFF68681);
+  static const Color fadedBlue = Color(0xff5D76A8);
+  static const Color extraFadedBlue = Color(0xff859DCE);
+  static const Color peach = Color(0xFFF68681);
+  static const Color darkPeach = Color(0xFFEF5A54);
+  static const Color mildYellow = Color(0xFFEFBD17);
+  static const Color mildGreen = Color(0XFF6DC124);
+  static const Color candyRed = Color(0XFFFF0000);
+  static const Color darkOffWhite = Color(0xFFE1E8F9);
+  static const Color fadeWhite = Color(0xFFE2E2E2);
+  static const Color lightBabyBlue = Color(0xff939FB7);
+  static const Color offWhite = Color(0xFFF1F1F1);
+  static const Color darkCornFlowerBlue = Color(0xFF5D76A8);
+  static const Color cornFlowerBlue = Color(0xff859DCE);
+  static const Color indigoBlue = Color(0xFF3B649C);
+  static const Color lightIndigoBlue = Color(0xFFE1E8F8);
+  static const Color ashColor = Color(0xFFE6E6E6);
 }

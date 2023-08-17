@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:thinkhub/src/application/core/bloc_provider.dart';
-import 'package:thinkhub/src/application/web_view/web_view_bloc.dart';
-import 'package:thinkhub/src/presentation/web_view/web_view_page.dart';
+import 'package:flutter_base/src/application/core/bloc_provider.dart';
+import 'package:flutter_base/src/application/web_view/web_view_bloc.dart';
+import 'package:flutter_base/src/presentation/splash/splash_page.dart';
+import 'package:flutter_base/src/presentation/web_view/web_view_page.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 final Map<String, Widget Function(BuildContext context)> routes = {
-/*  SplashPage.route: (_) => Provider<SplashBloc>(
+  SplashPage.route: (_) => BlocProvider(
         create: (_) => provideSplashBloc(),
-        dispose: (_, bloc) => bloc.dispose(),
-        child: SplashPage(),
+        child: const SplashPage(),
       ),
-  HomePage.route: (_) => Provider<HomeBloc>(
-        create: (_) => provideHomeBloc(),
-        dispose: (_, bloc) => bloc.dispose(),
-        child: HomePage(),
-      ),*/
+/*  LoginPage.route: (_) => BlocProvider(
+    create: (_) => provideLoginBloc(),
+    child: const LoginPage(),
+  ),*/
 };
 
 Route<dynamic>? generatedRoutes(RouteSettings settings) {
@@ -42,10 +41,9 @@ MaterialPageRoute _getWebViewRoute(
   WebViewArgument argument,
 ) {
   return MaterialPageRoute(
-    builder: (context) => Provider<WebViewBloc>(
-      create: (context) => provideWebViewBloc(argument.isHeaderRequired),
-      dispose: (_, bloc) => bloc.dispose(),
-      child: WebViewPage(),
+    builder: (context) => BlocProvider<WebViewBloc>(
+      create: (context) => provideWebViewBloc(argument),
+      child: const WebViewPage(),
     ),
     settings: settings,
   );

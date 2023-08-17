@@ -20,17 +20,39 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'en';
 
-  static String m0(username, status) => "${username} is ${status}";
+  static String m0(label) => "Are you sure you want to cancel the ${label}?";
+
+  static String m1(username, status) => "${username} is ${status}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "_locale": MessageLookupByLibrary.simpleMessage("en"),
         "btnCancel": MessageLookupByLibrary.simpleMessage("Cancel"),
+        "btnDelete": MessageLookupByLibrary.simpleMessage("Delete"),
         "btnLater": MessageLookupByLibrary.simpleMessage("Later"),
+        "btnNo": MessageLookupByLibrary.simpleMessage("No"),
+        "btnOk": MessageLookupByLibrary.simpleMessage("Ok"),
+        "btnTryAgain": MessageLookupByLibrary.simpleMessage("Try Again"),
         "btnUpdate": MessageLookupByLibrary.simpleMessage("Update"),
         "btnView": MessageLookupByLibrary.simpleMessage("View"),
+        "btnYes": MessageLookupByLibrary.simpleMessage("Yes"),
+        "btnYesCancel": MessageLookupByLibrary.simpleMessage("Yes, Cancel"),
         "errWebView": MessageLookupByLibrary.simpleMessage(
             "Error Loading The Web Page. Try Again Later"),
+        "labelCancelXConfirmation": m0,
+        "labelFlutterBase":
+            MessageLookupByLibrary.simpleMessage("Flutter Base"),
+        "labelNoConnection":
+            MessageLookupByLibrary.simpleMessage("No Connection"),
+        "labelNoData": MessageLookupByLibrary.simpleMessage("No Data"),
+        "labelNoNetworkAvailable":
+            MessageLookupByLibrary.simpleMessage("No Network Available"),
+        "labelOk": MessageLookupByLibrary.simpleMessage("Ok"),
+        "labelPleaseCheckYourInternetConnection":
+            MessageLookupByLibrary.simpleMessage(
+                "Please Check Your Internet Connection"),
+        "labelSomethingWentWrong": MessageLookupByLibrary.simpleMessage(
+            "Something Went Wrong. Please Try Again Later"),
         "messageFlexibleUpdate": MessageLookupByLibrary.simpleMessage(
             "There is a new version available for this app. Try out new features by updating the app."),
         "messageImmediateUpdate": MessageLookupByLibrary.simpleMessage(
@@ -42,6 +64,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Update Available"),
         "titleImmediateUpdate":
             MessageLookupByLibrary.simpleMessage("Update Required"),
-        "userStatus": m0
+        "titleLogin": MessageLookupByLibrary.simpleMessage("Login"),
+        "titleLogout": MessageLookupByLibrary.simpleMessage("Logout"),
+        "userStatus": m1
       };
 }

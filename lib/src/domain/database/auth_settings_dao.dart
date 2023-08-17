@@ -1,5 +1,5 @@
+import 'package:flutter_base/src/domain/database/base_hive_dao.dart';
 import 'package:hive/hive.dart';
-import 'package:thinkhub/src/domain/database/base_hive_dao.dart';
 
 class AuthSettingsDao extends BaseHiveDao {
   static const kLastTokenRefresh = 'last_token_refresh';

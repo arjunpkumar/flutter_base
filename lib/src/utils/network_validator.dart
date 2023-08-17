@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:connectivity/connectivity.dart';
-import 'package:thinkhub/src/core/exceptions.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter_base/src/core/exceptions.dart';
 
 class NetworkValidator {
   final Connectivity connectivity;

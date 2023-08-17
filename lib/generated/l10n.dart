@@ -60,6 +60,16 @@ class S {
     );
   }
 
+  /// `Flutter Base`
+  String get labelFlutterBase {
+    return Intl.message(
+      'Flutter Base',
+      name: 'labelFlutterBase',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Please Authenticate Using Biometric or Device Lock Mechanism`
   String get messagePleaseAuthenticateUsingBiometric {
     return Intl.message(
@@ -105,6 +115,16 @@ class S {
     return Intl.message(
       'View',
       name: 'btnView',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ok`
+  String get btnOk {
+    return Intl.message(
+      'Ok',
+      name: 'btnOk',
       desc: '',
       args: [],
     );
@@ -165,6 +185,146 @@ class S {
     return Intl.message(
       'There is a new version available for this app. Try out new features by updating the app.',
       name: 'messageFlexibleUpdate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Something Went Wrong. Please Try Again Later`
+  String get labelSomethingWentWrong {
+    return Intl.message(
+      'Something Went Wrong. Please Try Again Later',
+      name: 'labelSomethingWentWrong',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ok`
+  String get labelOk {
+    return Intl.message(
+      'Ok',
+      name: 'labelOk',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No Network Available`
+  String get labelNoNetworkAvailable {
+    return Intl.message(
+      'No Network Available',
+      name: 'labelNoNetworkAvailable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Are you sure you want to cancel the {label}?`
+  String labelCancelXConfirmation(String label) {
+    return Intl.message(
+      'Are you sure you want to cancel the $label?',
+      name: 'labelCancelXConfirmation',
+      desc: '',
+      args: [label],
+    );
+  }
+
+  /// `Yes, Cancel`
+  String get btnYesCancel {
+    return Intl.message(
+      'Yes, Cancel',
+      name: 'btnYesCancel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No Data`
+  String get labelNoData {
+    return Intl.message(
+      'No Data',
+      name: 'labelNoData',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Yes`
+  String get btnYes {
+    return Intl.message(
+      'Yes',
+      name: 'btnYes',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No`
+  String get btnNo {
+    return Intl.message(
+      'No',
+      name: 'btnNo',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No Connection`
+  String get labelNoConnection {
+    return Intl.message(
+      'No Connection',
+      name: 'labelNoConnection',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please Check Your Internet Connection`
+  String get labelPleaseCheckYourInternetConnection {
+    return Intl.message(
+      'Please Check Your Internet Connection',
+      name: 'labelPleaseCheckYourInternetConnection',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Try Again`
+  String get btnTryAgain {
+    return Intl.message(
+      'Try Again',
+      name: 'btnTryAgain',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delete`
+  String get btnDelete {
+    return Intl.message(
+      'Delete',
+      name: 'btnDelete',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Login`
+  String get titleLogin {
+    return Intl.message(
+      'Login',
+      name: 'titleLogin',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Logout`
+  String get titleLogout {
+    return Intl.message(
+      'Logout',
+      name: 'titleLogout',
       desc: '',
       args: [],
     );

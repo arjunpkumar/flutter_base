@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:thinkhub/src/core/constants.dart';
+import 'package:flutter_base/src/core/app_constants.dart';
 
 class LoaderWidget extends StatelessWidget {
   const LoaderWidget({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

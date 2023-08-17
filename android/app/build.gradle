@@ -38,15 +38,6 @@ android {
     compileSdkVersion 33
     ndkVersion flutter.ndkVersion
 
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
-
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
@@ -57,12 +48,13 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.thinkpalm.thinkhub"
+        applicationId "com.thinkpalm.flutterbase"
         minSdkVersion 23
         targetSdkVersion 33
         multiDexEnabled true
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        ndk.abiFilters 'arm64-v8a', 'armeabi-v7a', 'x86_64'
     }
     signingConfigs {
         release {
@@ -86,21 +78,21 @@ android {
         development {
             dimension "api"
             applicationIdSuffix ".dev"
-            resValue "string", "app_name", "ThinkHub Dev"
+            resValue "string", "app_name", "FlutterBase Dev"
         }
         qa {
             dimension "api"
             applicationIdSuffix ".qa"
-            resValue "string", "app_name", "ThinkHub QA"
+            resValue "string", "app_name", "FlutterBase QA"
         }
         staging {
             dimension "api"
             applicationIdSuffix ".stage"
-            resValue "string", "app_name", "ThinkHub Stage"
+            resValue "string", "app_name", "FlutterBase Stage"
         }
         production {
             dimension "api"
-            resValue "string", "app_name", "ThinkHub"
+            resValue "string", "app_name", "FlutterBase"
         }
     }
 }

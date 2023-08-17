@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_base/src/presentation/core/theme/text_styles.dart';
 
 ///Returns true if Positive Button clicked, false otherwise
 Future<bool?> openAppDialog(
@@ -11,6 +12,7 @@ Future<bool?> openAppDialog(
 }) {
   assert(title != null || child != null);
   return showDialog<bool>(
+    useRootNavigator: false,
     context: context,
     builder: (context) {
       return WillPopScope(
@@ -22,21 +24,23 @@ Future<bool?> openAppDialog(
           title: title != null
               ? Text(
                   title,
-                  style: Theme.of(context).textTheme.headline6,
+                  style: TextStyles.body1Bold(context),
                 )
               : null,
-          content: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              if (content != null)
-                Text(
-                  content,
-                  style: Theme.of(context).textTheme.subtitle2,
-                ),
-              if (child != null) child
-            ],
-          ),
+          content: content != null || child != null
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    if (content != null)
+                      Text(
+                        content,
+                        style: TextStyles.body1Regular(context),
+                      ),
+                    if (child != null) child
+                  ],
+                )
+              : null,
           actions: <Widget>[
             if (negativeButtonText != null)
               TextButton(

@@ -1,11 +1,11 @@
 import 'package:drift/drift.dart';
-import 'package:thinkhub/src/domain/database/core/app_database.dart';
+import 'package:flutter_base/src/domain/database/core/app_database.dart';
 
 part 'user_dao.g.dart';
 
 @DriftAccessor(tables: [Users])
 class UserDao extends DatabaseAccessor<AppDatabase> with _$UserDaoMixin {
-  UserDao(AppDatabase db) : super(db);
+  UserDao(super.db);
 
   Future<User?> getActiveUser() {
     return select(users).getSingleOrNull();

@@ -1,12 +1,12 @@
 import 'package:drift/drift.dart';
-import 'package:thinkhub/src/domain/database/core/app_database.dart';
+import 'package:flutter_base/src/domain/database/core/app_database.dart';
 
 part 'auth_token_dao.g.dart';
 
 @DriftAccessor(tables: [AuthTokens])
 class AuthTokenDao extends DatabaseAccessor<AppDatabase>
     with _$AuthTokenDaoMixin {
-  AuthTokenDao(AppDatabase db) : super(db);
+  AuthTokenDao(super.db);
 
   Future<int> saveAuthToken(AuthToken entry) {
     return into(authTokens).insert(entry);

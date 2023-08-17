@@ -1,35 +1,44 @@
-import 'package:dio/dio.dart';
-import 'package:thinkhub/src/core/constants.dart';
-import 'package:thinkhub/src/core/exceptions.dart';
-import 'package:thinkhub/src/domain/database/core/app_database.dart';
+import 'package:flutter_base/src/domain/core/config_repository.dart';
+import 'package:flutter_base/src/domain/database/core/app_database.dart';
+import 'package:flutter_base/src/utils/extensions.dart';
 
 class UserService {
-  Future<Map<String, dynamic>> fetchUser(String token) async {
-    final response = await NetworkClient.dioInstance.get(
-      APIEndpoints.userinfo,
-      options: Options(
-        headers: {
-          'Authorization': 'Bearer $token',
-        },
-      ),
-    );
+  final ConfigRepository configRepository;
 
-    if (response.statusCode != 200) {
-      throw CustomException('Error Fetching User');
-    }
+  UserService({required this.configRepository});
 
-    return response.data as Map<String, dynamic>;
+  Future<Map<String, dynamic>> fetchUser(AuthToken authToken) async {
+    return {};
+    /*try {
+      final response = await NetworkClient.dioInstance.get(
+        Config.appFlavor.restBaseUrlHeads +
+            configRepository.restEmployeeBasicDetailsUrl,
+        options: Options(headers: getHeaders(authToken)),
+      );
+      final responseMap = toGenericMap(response.data);
+      if (responseMap["responseCode"] == 200) {
+        return toGenericMap(responseMap["data"]);
+      } else {
+        throw CustomException(
+          'ERROR FETCHING USER',
+          message: responseMap['message'].toString(),
+        );
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+      throw CustomException('ERROR FETCHING USER', message: e.toString());
+    }*/
   }
 }
 
 class UserMapper {
   User fromNetworkJson(Map<String, dynamic> json) {
     return User(
-      id: json["sub"],
-      firstName: json["first_name"],
-      lastName: json["last_name"],
-      designation: json["designation"],
-      email: json["email"],
+      id: toDefaultString(json["sub"]),
+      firstName: toDefaultString(json["first_name"]),
+      lastName: toDefaultString(json["last_name"]),
+      designation: toString(json["designation"]),
+      email: toString(json["email"]),
     );
   }
 }

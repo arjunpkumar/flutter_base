@@ -1,15 +1,15 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:thinkhub/generated/l10n.dart';
-import 'package:thinkhub/src/application/model/notification_message.dart';
-import 'package:thinkhub/src/core/app.dart';
-import 'package:thinkhub/src/core/constants.dart';
-import 'package:thinkhub/src/domain/auth/auth_repository.dart';
-import 'package:thinkhub/src/domain/auth/user_repository.dart';
-import 'package:thinkhub/src/domain/database/core/app_database.dart';
-import 'package:thinkhub/src/presentation/widgets/dialog/app_dialog.dart';
-import 'package:thinkhub/src/utils/deeplink_navigator.dart';
-import 'package:thinkhub/src/utils/notification_util.dart';
+import 'package:flutter_base/generated/l10n.dart';
+import 'package:flutter_base/src/application/model/notification_message.dart';
+import 'package:flutter_base/src/core/app.dart';
+import 'package:flutter_base/src/core/app_constants.dart';
+import 'package:flutter_base/src/domain/auth/auth_repository.dart';
+import 'package:flutter_base/src/domain/auth/user_repository.dart';
+import 'package:flutter_base/src/domain/database/core/app_database.dart';
+import 'package:flutter_base/src/presentation/widgets/dialog/app_dialog.dart';
+import 'package:flutter_base/src/utils/deeplink_navigator.dart';
+import 'package:flutter_base/src/utils/notification_util.dart';
 
 enum NotificationMode { onLaunch, onResume, onMessage }
 
@@ -43,24 +43,20 @@ class NotificationsHandler {
     });
 
     FirebaseMessaging.onMessage.listen((message) async {
-      if (message != null) {
-        final notification = NotificationMessage(message: message);
-        await handleNotification(
-          notification: notification,
-          mode: NotificationMode.onMessage,
-        );
-      }
+      final notification = NotificationMessage(message: message);
+      await handleNotification(
+        notification: notification,
+        mode: NotificationMode.onMessage,
+      );
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((message) async {
-      if (message != null) {
-        debugPrint("Notification Opened App : ${message.notification?.title}");
-        final notification = NotificationMessage(message: message);
-        await handleNotification(
-          notification: notification,
-          mode: NotificationMode.onResume,
-        );
-      }
+      debugPrint("Notification Opened App : ${message.notification?.title}");
+      final notification = NotificationMessage(message: message);
+      await handleNotification(
+        notification: notification,
+        mode: NotificationMode.onResume,
+      );
     });
   }
 
@@ -69,15 +65,11 @@ class NotificationsHandler {
     required NotificationMode mode,
   }) async {
     // FlutterAppBadger.updateBadgeCount(notification.unreadCount);
-    if (notification.type == null || notification.type.isEmpty) {
-      return;
-    }
 
     final isSessionActive = await authRepository.isSessionActive();
     if (!isSessionActive) {
       return;
     }
-    final user = await userRepository.getActiveUser();
 
     if (mode != NotificationMode.onMessage) {
       await _handleDeeplink(notification, mode);
@@ -118,8 +110,8 @@ class NotificationsHandler {
     NotificationMessage notification,
     NotificationMode mode,
   ) async {
-    final title = notification.title ?? '';
-    final body = notification.body ?? '';
+    final title = notification.title;
+    final body = notification.body;
     final context = navigatorKey.currentState!.overlay!.context;
     final shouldNavigate = [
       DeepLinkType.profile,

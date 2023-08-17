@@ -1,12 +1,14 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_base/config.dart';
+import 'package:flutter_base/generated/l10n.dart';
+import 'package:flutter_base/src/core/app_constants.dart';
+import 'package:flutter_base/src/domain/app_update/in_app_update.dart';
+import 'package:flutter_base/src/domain/app_update/store_version.dart';
+import 'package:flutter_base/src/domain/core/config_repository.dart';
 import 'package:hive/hive.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:thinkhub/config.dart';
-import 'package:thinkhub/generated/l10n.dart';
-import 'package:thinkhub/src/core/constants.dart';
-import 'package:thinkhub/src/domain/core/config_repository.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 enum UpdateMode { flexible, immediate, none }
@@ -83,20 +85,20 @@ class _AppVersionWidgetState extends State<AppVersionWidget> {
 
     bool isStoreUpdateAvailable = false;
 
-/*    try {
-      if (Platform.isAndroid) {
+    try {
+      if (Platform.isAndroid && Config.appMode == AppMode.release) {
         final info = await InAppUpdate.checkForUpdate();
         // info.updateAvailability will give the result in integer
         isStoreUpdateAvailable =
             info.updateAvailability == UpdateAvailability.updateAvailable;
       } else if (Platform.isIOS) {
-        final updateStatus = await StoreVersion(iOSId: packageInfo.packageName)
+        final updateStatus = await StoreVersion(iOSId: packageInfo?.packageName)
             .getVersionStatus();
-        isStoreUpdateAvailable = updateStatus.canUpdate;
+        isStoreUpdateAvailable = updateStatus?.canUpdate ?? false;
       }
     } catch (e) {
       debugPrint(e.toString());
-    }*/
+    }
 
     if (latestStableVersion > currentVersion) {
       updateMode = UpdateMode.immediate;
@@ -159,11 +161,11 @@ class _AppVersionWidgetState extends State<AppVersionWidget> {
             return AlertDialog(
               title: Text(
                 getImmediateUpdateTitle(),
-                style: Theme.of(context).textTheme.headline6,
+                style: Theme.of(context).textTheme.titleLarge,
               ),
               content: Text(
                 getImmediateUpdateMessage(),
-                style: Theme.of(context).textTheme.subtitle2,
+                style: Theme.of(context).textTheme.titleSmall,
               ),
               actions: <Widget>[
                 TextButton(
@@ -175,42 +177,43 @@ class _AppVersionWidgetState extends State<AppVersionWidget> {
           },
         );
       case UpdateMode.flexible:
-        final hasIgnored = await hasIgnoredPreviously(info.updateVersion);
-        if (hasIgnored) {
-          return;
-        }
-        return showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) {
-            return AlertDialog(
-              title: Text(
-                getFlexibleUpdateTitle(),
-                style: Theme.of(context).textTheme.headline6,
-              ),
-              content: Text(
-                getFlexibleUpdateMessage(),
-                style: Theme.of(context).textTheme.subtitle2,
-              ),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () async {
-                    ignoreVersion(info.updateVersion)
-                        .then((value) => Navigator.pop(context));
-                  },
-                  child: Text(S.current.btnLater.toUpperCase()),
+        hasIgnoredPreviously(info.updateVersion).then((hasIgnored) {
+          if (hasIgnored) {
+            return null;
+          }
+          return showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) {
+              return AlertDialog(
+                title: Text(
+                  getFlexibleUpdateTitle(),
+                  style: Theme.of(context).textTheme.titleLarge,
                 ),
-                TextButton(
-                  onPressed: () async {
-                    Navigator.pop(context);
-                    await openStore();
-                  },
-                  child: Text(S.current.btnUpdate.toUpperCase()),
+                content: Text(
+                  getFlexibleUpdateMessage(),
+                  style: Theme.of(context).textTheme.titleSmall,
                 ),
-              ],
-            );
-          },
-        );
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () async {
+                      ignoreVersion(info.updateVersion)
+                          .then((value) => Navigator.pop(context));
+                    },
+                    child: Text(S.current.btnLater.toUpperCase()),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      Navigator.pop(context);
+                      await openStore();
+                    },
+                    child: Text(S.current.btnUpdate.toUpperCase()),
+                  ),
+                ],
+              );
+            },
+          );
+        });
     }
   }
 

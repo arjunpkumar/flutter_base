@@ -1,6 +1,6 @@
+import 'package:flutter_base/src/core/app_constants.dart';
+import 'package:flutter_base/src/utils/share_preference_util.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:thinkhub/src/core/constants.dart';
-import 'package:thinkhub/src/utils/share_preference_util.dart';
 
 class DeeplinkNavigator {
   final SharedPreferences prefs;
@@ -37,5 +37,4 @@ class DeeplinkNavigator {
       arguments: data,
     );
   }*/
-
 }

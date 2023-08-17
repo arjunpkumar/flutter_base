@@ -1,20 +1,23 @@
+import 'dart:io';
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_base/src/core/app.dart';
+import 'package:flutter_base/src/core/exceptions.dart';
+import 'package:flutter_base/src/domain/auth/auth_service.dart';
+import 'package:flutter_base/src/domain/auth/user_repository.dart';
+import 'package:flutter_base/src/domain/core/config_repository.dart';
+import 'package:flutter_base/src/domain/core/log_services.dart';
+import 'package:flutter_base/src/domain/database/auth_settings_dao.dart';
+import 'package:flutter_base/src/domain/database/auth_token_dao.dart';
+import 'package:flutter_base/src/domain/database/core/app_database.dart';
+import 'package:flutter_base/src/presentation/widgets/loader_widget.dart';
+import 'package:flutter_base/src/utils/secure_storage_util.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:oauth2/oauth2.dart' as oauth2;
 import 'package:synchronized/synchronized.dart';
-import 'package:thinkhub/src/core/app.dart';
-import 'package:thinkhub/src/core/exceptions.dart';
-import 'package:thinkhub/src/domain/auth/auth_service.dart';
-import 'package:thinkhub/src/domain/auth/user_repository.dart';
-import 'package:thinkhub/src/domain/core/log_services.dart';
-import 'package:thinkhub/src/domain/database/auth_settings_dao.dart';
-import 'package:thinkhub/src/domain/database/auth_token_dao.dart';
-import 'package:thinkhub/src/domain/database/core/app_database.dart';
-import 'package:thinkhub/src/presentation/widgets/loader_widget.dart';
-import 'package:thinkhub/src/utils/secure_storage_util.dart';
 
 class AuthRepository {
   static AuthRepository? instance;
@@ -23,6 +26,7 @@ class AuthRepository {
   final AuthTokenDao authTokenDao;
   final AuthSettingsDao authSettingsDao;
   final UserRepository userRepository;
+  final ConfigRepository configRepository;
   final FlutterSecureStorage storage;
   final AppDatabase appDatabase;
   final Logger logger;
@@ -37,6 +41,7 @@ class AuthRepository {
     required this.authSettingsDao,
     required this.appDatabase,
     required this.userRepository,
+    required this.configRepository,
     required this.storage,
     required this.logger,
   }) {
@@ -53,6 +58,10 @@ class AuthRepository {
   Future<User?> signIn() async {
     await authTokenDao.deleteTokens();
 
+    if (!configRepository.isInitialFetchCompleted()) {
+      await configRepository.syncConfig();
+    }
+
     String? codeVerifier;
     if (await storage.containsKey(key: SecureStorageKey.codeVerifier)) {
       codeVerifier = await storage.read(key: SecureStorageKey.codeVerifier);
@@ -60,7 +69,9 @@ class AuthRepository {
     codeVerifier ??= _createCodeVerifier();
     _saveCodeVerifier(codeVerifier);
 
-    final credentials = await authServices.signIn(codeVerifier: codeVerifier);
+    final credentials = !kIsWeb && Platform.isWindows
+        ? await authServices.signInWindows(codeVerifier: codeVerifier)
+        : await authServices.signIn(codeVerifier: codeVerifier);
     if (credentials != null) {
       logger.log(LogEvents.loggedIn, null);
       _saveCredentials(credentials);
@@ -73,14 +84,12 @@ class AuthRepository {
 
   Future<void> _refreshAccessToken() async {
     final savedCredentials = oauth2.Credentials.fromJson(
-      (await storage.read(key: SecureStorageKey.oAuthCredentials) ?? ''),
+      await storage.read(key: SecureStorageKey.oAuthCredentials) ?? '',
     );
 
     final credentials = await authServices.refreshAccessToken(savedCredentials);
-    if (credentials != null) {
-      _saveCredentials(credentials);
-      await _updateUser(_generateAuthTokenFromCredential(credentials));
-    }
+    _saveCredentials(credentials);
+    await _updateUser(_generateAuthTokenFromCredential(credentials));
   }
 
   AuthToken _generateAuthTokenFromCredential(oauth2.Credentials credential) {
@@ -93,42 +102,66 @@ class AuthRepository {
   }
 
   Future<User> _updateUser(AuthToken authToken) async {
-    final user = await userRepository.getUser(authToken.accessToken);
-    logger.log(LogEvents.userFetchFromIDS, null);
     try {
+      final user = await userRepository.getUser(authToken);
+      logger.log(LogEvents.userFetchFromIDS, null);
       await userRepository.deleteUsers();
       await authTokenDao.deleteTokens();
       await authTokenDao.saveAuthToken(authToken);
       await userRepository.saveUser(user);
       logger.log(LogEvents.logInDBUpdate, null);
+      return user;
     } catch (e) {
       debugPrint(e.toString());
       logger.log(LogEvents.logInDBUpdateFailed, null);
       rethrow;
     }
-
-    return user;
   }
 
-  Future<AuthToken?> getActiveSessionToken() {
+  Future<AuthToken?> getActiveToken() {
     return authTokenDao.getActiveSessionToken();
   }
 
   Future<bool> isSessionActive() async {
-    final token = await getActiveSessionToken();
+    final token = await getActiveToken();
     final user = await userRepository.getActiveUser();
     return token != null && user != null;
   }
 
-  Future<void> signOut() async {
-    final token = await getActiveSessionToken();
-    await storage.deleteAll();
-    await appDatabase.clearUserRelatedTables();
-
+  Future<bool> signOut() async {
+    final token = await getActiveToken();
     final String? codeVerifier =
         await storage.read(key: SecureStorageKey.codeVerifier);
-    // await authServices.signOut(token, codeVerifier);
-    await _saveCredentials(null);
+
+    if (token != null && codeVerifier != null) {
+      try {
+        await authServices.signOut(token, codeVerifier);
+      } catch (e) {
+        debugPrint(e.toString());
+        return false;
+      }
+    }
+
+    Future.value([
+      await appDatabase.clearUserRelatedTables(),
+      await storage.deleteAll(),
+      await authSettingsDao.clear(),
+      await _saveCredentials(null),
+    ]);
+
+    bool isNewRouteSameAsCurrent = false;
+    /* Navigator.popUntil(navigatorKey.currentContext!, (route) {
+      if (route.settings.name == LoginPage.route) {
+        isNewRouteSameAsCurrent = true;
+        return true;
+      }
+      return false;
+    });*/
+
+/*    if (!isNewRouteSameAsCurrent) {
+      await Navigator.pushNamed(navigatorKey.currentContext!, LoginPage.route);
+    }*/
+    return true;
   }
 
   Future<void> processAuthError() async {
@@ -142,7 +175,7 @@ class AuthRepository {
   }
 
   Future<void> initRefreshAccessToken() async {
-    final token = await getActiveSessionToken();
+    final token = await getActiveToken();
     if (token?.refreshToken != null) {
       try {
         await _refreshAccessToken();
@@ -167,24 +200,21 @@ class AuthRepository {
   }
 
   Future _logoutAndNavigateToLogin() async {
+    late BuildContext loaderContext;
     showDialog(
       context: navigatorKey.currentState!.overlay!.context,
       barrierDismissible: false,
       builder: (context) {
+        loaderContext = context;
         return WillPopScope(
           onWillPop: () async => false,
           child: const LoaderWidget(),
         );
       },
     );
-    await signOut();
-    Navigator.of(navigatorKey.currentState!.overlay!.context,
-            rootNavigator: true)
-        .pop();
-/*    await navigatorKey.currentState.pushNamedAndRemoveUntil(
-      SignInPage.route,
-      ModalRoute.withName(HomePage.route),
-    );*/
+    await signOut().then((value) {
+      if (loaderContext.mounted) Navigator.pop(loaderContext);
+    });
   }
 
   Future<void> _saveCodeVerifier(String codeVerifier) async {

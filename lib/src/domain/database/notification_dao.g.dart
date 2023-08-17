@@ -2,10 +2,7 @@
 
 part of 'notification_dao.dart';
 
-// **************************************************************************
-// DaoGenerator
-// **************************************************************************
-
+// ignore_for_file: type=lint
 mixin _$NotificationDaoMixin on DatabaseAccessor<AppDatabase> {
   $NotificationsTable get notifications => attachedDatabase.notifications;
 }

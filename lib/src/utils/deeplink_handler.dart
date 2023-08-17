@@ -1,5 +1,5 @@
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
-import 'package:thinkhub/src/utils/deeplink_navigator.dart';
+import 'package:flutter_base/src/utils/deeplink_navigator.dart';
 
 class DeeplinkHandler {
   final DeeplinkNavigator navigator;

@@ -1,69 +1,96 @@
 import 'dart:async';
 import 'dart:core';
 import 'dart:io';
+import 'dart:ui';
 
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_base/config.dart';
+import 'package:flutter_base/firebase_options.dart';
+import 'package:flutter_base/generated/l10n.dart';
+import 'package:flutter_base/src/application/core/bloc_provider.dart';
+import 'package:flutter_base/src/core/app_constants.dart';
+import 'package:flutter_base/src/core/routes.dart';
+import 'package:flutter_base/src/domain/core/config_repository.dart';
+import 'package:flutter_base/src/domain/core/log_services.dart';
+import 'package:flutter_base/src/domain/core/repository_provider.dart';
+import 'package:flutter_base/src/presentation/core/theme/text_styles.dart';
+import 'package:flutter_base/src/presentation/widgets/app_version_widget.dart';
+import 'package:flutter_base/src/utils/deeplink_handler.dart';
+import 'package:flutter_base/src/utils/deeplink_navigator.dart';
+import 'package:flutter_base/src/utils/error_logger.dart';
+import 'package:flutter_base/src/utils/notifications_handler.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hive/hive.dart';
-import 'package:package_info/package_info.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:thinkhub/config.dart';
-import 'package:thinkhub/generated/l10n.dart';
-import 'package:thinkhub/src/application/core/bloc_provider.dart';
-import 'package:thinkhub/src/core/constants.dart';
-import 'package:thinkhub/src/core/routes.dart';
-import 'package:thinkhub/src/domain/core/config_repository.dart';
-import 'package:thinkhub/src/domain/core/log_services.dart';
-import 'package:thinkhub/src/domain/core/repository_provider.dart';
-import 'package:thinkhub/src/presentation/core/theme/text_styles.dart';
-import 'package:thinkhub/src/presentation/widgets/app_version_widget.dart';
-import 'package:thinkhub/src/utils/deeplink_handler.dart';
-import 'package:thinkhub/src/utils/deeplink_navigator.dart';
-import 'package:thinkhub/src/utils/error_logger.dart';
-import 'package:thinkhub/src/utils/notifications_handler.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 Future<void> initApp() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  await FirebaseRemoteConfig.instance.ensureInitialized();
+
+  if (kIsWeb || Platform.isWindows) {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } else {
+    await Firebase.initializeApp();
+  }
+  if (kIsWeb || !Platform.isWindows) {
+    await FirebaseRemoteConfig.instance.ensureInitialized();
+  }
 
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
 
-  final shouldEnablePerformanceMonitoring =
-      Config.appFlavor is Production && Config.appMode == AppMode.release;
+  // final shouldEnablePerformanceMonitoring =
+  //     Config.appFlavor is Production && Config.appMode == AppMode.release;
 
   final documentsDirectory = await getApplicationDocumentsDirectory();
-  Hive.init(documentsDirectory.path);
+  final path = !kIsWeb && Platform.isWindows
+      ? p.join(documentsDirectory.path, "/FlutterBase")
+      : documentsDirectory.path;
+  Hive.init(path);
 
   // Disable DebugPrint in Release Mode
   if (Config.appMode == AppMode.release) {
     debugPrint = (String? message, {int? wrapWidth}) {};
   }
 
-  if (!kIsWeb &&
-      (Platform.isAndroid ||
-          Platform.isFuchsia ||
-          Platform.isIOS ||
-          Platform.isMacOS)) {
+  if (kIsWeb ||
+      Platform.isAndroid ||
+      Platform.isFuchsia ||
+      Platform.isIOS ||
+      Platform.isMacOS ||
+      Platform.isWindows ||
+      Platform.isLinux) {
     Config.packageInfo = await PackageInfo.fromPlatform();
+    if (!kIsWeb) {
+      if (Platform.isAndroid || Platform.isFuchsia) {
+        Config.androidDeviceInfo = await DeviceInfoPlugin().androidInfo;
+      }
+      if (Platform.isIOS || Platform.isMacOS) {
+        Config.iOSDeviceInfo = await DeviceInfoPlugin().iosInfo;
+      }
+    }
   }
 
 // Sync Configs
   try {
-    final configsRepository = ConfigRepository.instance;
+    final configsRepository = ConfigRepository.instance();
     await configsRepository.initConfig();
     await configsRepository.syncConfig();
   } catch (e) {
-    rethrow;
+    debugPrint(e.toString());
   }
 
 /*  if(Config.appFlavor is! Production && Config.appMode != AppMode.release){
@@ -105,6 +132,9 @@ class _AppState extends State<App> with WidgetsBindingObserver {
     _setupHandlers();
 
     WidgetsBinding.instance.addObserver(this);
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
   }
 
   @override
@@ -147,7 +177,7 @@ class _AppState extends State<App> with WidgetsBindingObserver {
         onGenerateRoute: (settings) {
           return MaterialPageRoute(
             builder: (context) => AppVersionWidget(
-              configsRepository: ConfigRepository.instance,
+              configsRepository: ConfigRepository.instance(),
               child: child!,
             ),
           );
@@ -168,22 +198,22 @@ class _AppState extends State<App> with WidgetsBindingObserver {
       ],
       theme: ThemeData(
         textTheme: TextTheme(
-          headline1: TextStyles.h1ExtraLight(context),
-          headline2: TextStyles.h2ExtraLight(context),
-          headline3: TextStyles.h2Light(context),
-          headline4: TextStyles.titleSemiBold(context),
-          headline6: TextStyles.title2Bold(context),
-          subtitle2: TextStyles.title3Bold(context),
-          subtitle1: TextStyles.title2Medium(context),
-          bodyText2: TextStyles.body1Regular(context),
-          bodyText1: TextStyles.body1Bold(context),
-          caption: TextStyles.captionRegular(context),
-          overline: TextStyles.captionBold(context),
-          button: TextStyles.buttonBlack(context),
+          displayLarge: TextStyles.h1ExtraLight(context),
+          displayMedium: TextStyles.h2ExtraLight(context),
+          displaySmall: TextStyles.h2Light(context),
+          headlineMedium: TextStyles.titleSemiBold(context),
+          titleLarge: TextStyles.title2Bold(context),
+          titleSmall: TextStyles.title3Bold(context),
+          titleMedium: TextStyles.title2Medium(context),
+          bodyMedium: TextStyles.body1Regular(context),
+          bodyLarge: TextStyles.body1Bold(context),
+          bodySmall: TextStyles.captionRegular(context),
+          labelSmall: TextStyles.captionBold(context),
+          labelLarge: TextStyles.buttonBlack(context),
         ),
         dialogTheme: DialogTheme(
-          titleTextStyle: Theme.of(context).textTheme.headline6,
-          contentTextStyle: Theme.of(context).textTheme.bodyText2,
+          titleTextStyle: Theme.of(context).textTheme.titleLarge,
+          contentTextStyle: Theme.of(context).textTheme.bodyMedium,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(Units.kCardBorderRadius),
           ),
@@ -198,6 +228,7 @@ class _AppState extends State<App> with WidgetsBindingObserver {
       ),
       routes: routes,
       onGenerateRoute: (settings) => generatedRoutes(settings),
+      scrollBehavior: AppScrollBehavior(),
     );
   }
 
@@ -221,4 +252,15 @@ class _AppState extends State<App> with WidgetsBindingObserver {
     await _deeplinkHandler.setup();
     // LocalNotificationService().setNavigator(navigator);
   }
+}
+
+class AppScrollBehavior extends MaterialScrollBehavior {
+  @override
+  Set<PointerDeviceKind> get dragDevices => {
+        PointerDeviceKind.touch,
+        PointerDeviceKind.mouse,
+        PointerDeviceKind.stylus,
+        PointerDeviceKind.trackpad,
+        PointerDeviceKind.unknown,
+      };
 }

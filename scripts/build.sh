@@ -2,7 +2,7 @@
 
 # Read the user input
 
-echo "Enter the Build Format: 1.APK & IPA 2.APK 3.AppBundle 4.IPA"
+echo "Enter the Build Format: 1.APK & IPA 2.APK 3.AppBundle 4.IPA 5.Windows"
 read buildFormatValue
 echo "Flavor : 1.QA 2.Dev 3.Staging 4.Production"
 read flavorValue
@@ -10,8 +10,6 @@ echo "Build Number :"
 read buildNumber
 echo "Release Type : 1.Release 2.Debug 3.Profile"
 read releaseTypeValue
-
-
 
 case $buildFormatValue in
     2)
@@ -22,6 +20,9 @@ case $buildFormatValue in
         ;;
     4)
        buildFormat='ipa'
+        ;;
+    5)
+       buildFormat='windows'
         ;;
 esac
 
@@ -74,6 +75,10 @@ case $buildFormatValue in
     4)
         echo "flutter build $buildFormat --$releaseType -t $path --flavor $flavor --build-number $buildNumber --export-method ad-hoc"
         flutter build $buildFormat --$releaseType -t $path --flavor $flavor --build-number $buildNumber --export-method ad-hoc
+        ;;
+    5)
+        echo "flutter build $buildFormat --$releaseType -t $path --build-number $buildNumber"
+        flutter build $buildFormat --$releaseType -t $path --build-number $buildNumber
         ;;
 esac
 #

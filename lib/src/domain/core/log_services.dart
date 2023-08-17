@@ -1,6 +1,6 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart';
-import 'package:thinkhub/src/domain/database/core/app_database.dart';
+import 'package:flutter_base/src/domain/database/core/app_database.dart';
 
 class Logger {
   static Logger? _instance;

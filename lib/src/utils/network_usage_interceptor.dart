@@ -25,7 +25,7 @@ class NetworkUsageInterceptor extends InterceptorsWrapper {
   }
 
   @override
-  void onError(DioError err, ErrorInterceptorHandler handler) {
+  void onError(DioException err, ErrorInterceptorHandler handler) {
     _logNetworkUsage(err.requestOptions);
     super.onError(err, handler);
   }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:thinkhub/src/presentation/core/theme/colors.dart';
-import 'package:thinkhub/src/presentation/core/theme/text_styles.dart';
+import 'package:flutter_base/src/presentation/core/theme/colors.dart';
+import 'package:flutter_base/src/presentation/core/theme/text_styles.dart';
 
 ThemeData getAppThemeData(BuildContext context) {
   return Theme.of(context).copyWith(
@@ -29,13 +29,13 @@ ThemeData getAppThemeData(BuildContext context) {
 ThemeData getMarkdownTheme(BuildContext context, {double fontDelta = 0}) {
   return Theme.of(context).copyWith(
     textTheme: Theme.of(context).textTheme.copyWith(
-          headline5: TextStyles.h2Light(context, fontDelta: fontDelta)
+          headlineSmall: TextStyles.h2Light(context, fontDelta: fontDelta)
               ?.copyWith(fontWeight: FontWeight.w700),
-          headline6: TextStyles.titleSemiBold(context, fontDelta: fontDelta),
-          subtitle1: TextStyles.title2Medium(context, fontDelta: fontDelta),
-          bodyText1:
+          titleLarge: TextStyles.titleSemiBold(context, fontDelta: fontDelta),
+          titleMedium: TextStyles.title2Medium(context, fontDelta: fontDelta),
+          bodyLarge:
               TextStyles.body1BoldMarkdown(context, fontDelta: fontDelta),
-          bodyText2:
+          bodyMedium:
               TextStyles.body1RegularMarkdown(context, fontDelta: fontDelta),
         ),
   );

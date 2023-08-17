@@ -1,13 +1,13 @@
 import 'dart:io';
 
+import 'package:flutter_base/src/application/model/file_info.dart';
+import 'package:flutter_base/src/core/app_constants.dart';
+import 'package:flutter_base/src/domain/auth/auth_repository.dart';
+import 'package:flutter_base/src/utils/extensions.dart';
+import 'package:flutter_base/src/utils/network_utils.dart';
+import 'package:flutter_base/src/utils/string_utils.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
-import 'package:thinkhub/src/application/model/file_info.dart';
-import 'package:thinkhub/src/core/constants.dart';
-import 'package:thinkhub/src/domain/auth/auth_repository.dart';
-import 'package:thinkhub/src/utils/extensions.dart';
-import 'package:thinkhub/src/utils/network_utils.dart';
-import 'package:thinkhub/src/utils/string_utils.dart';
 
 class FileDownloader {
   final AuthRepository authRepository;

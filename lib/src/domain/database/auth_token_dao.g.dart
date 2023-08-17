@@ -2,10 +2,7 @@
 
 part of 'auth_token_dao.dart';
 
-// **************************************************************************
-// DaoGenerator
-// **************************************************************************
-
+// ignore_for_file: type=lint
 mixin _$AuthTokenDaoMixin on DatabaseAccessor<AppDatabase> {
   $AuthTokensTable get authTokens => attachedDatabase.authTokens;
 }

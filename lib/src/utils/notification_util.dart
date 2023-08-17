@@ -1,6 +1,6 @@
-import 'package:thinkhub/src/core/constants.dart';
-import 'package:thinkhub/src/domain/database/core/app_database.dart';
-import 'package:thinkhub/src/utils/network_validator.dart';
+import 'package:flutter_base/src/core/app_constants.dart';
+import 'package:flutter_base/src/domain/database/core/app_database.dart';
+import 'package:flutter_base/src/utils/network_validator.dart';
 
 class NotificationUtil {
   final NetworkValidator networkValidator;

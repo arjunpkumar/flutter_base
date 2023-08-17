@@ -1,9 +1,11 @@
 import 'dart:async';
 
-import 'package:thinkhub/src/core/exceptions.dart';
-import 'package:thinkhub/src/domain/auth/user_service.dart';
-import 'package:thinkhub/src/domain/database/core/app_database.dart';
-import 'package:thinkhub/src/domain/database/user_dao.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_base/src/core/exceptions.dart';
+import 'package:flutter_base/src/domain/auth/user_service.dart';
+import 'package:flutter_base/src/domain/database/core/app_database.dart';
+import 'package:flutter_base/src/domain/database/user_dao.dart';
+import 'package:flutter_base/src/utils/string_utils.dart';
 
 class UserRepository {
   final UserDao userDao;
@@ -18,13 +20,18 @@ class UserRepository {
     required this.userMapper,
   });
 
-  Future<User> getUser(String? token) async {
-    if (token == null || token.isEmpty) {
+  Future<User> getUser(AuthToken? authToken) async {
+    if (StringUtils.isNullOrEmpty(authToken?.accessToken)) {
       throw CustomException('INVALID TOKEN');
     }
-    final networkJson = await networkProvider.fetchUser(token);
-    final user = userMapper.fromNetworkJson(networkJson);
-    return user;
+    try {
+      final networkJson = await networkProvider.fetchUser(authToken!);
+      final user = userMapper.fromNetworkJson(networkJson);
+      return user;
+    } catch (e) {
+      debugPrint(e.toString());
+      rethrow;
+    }
   }
 
   Future<User?> userById(String userId) {

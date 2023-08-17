@@ -1,3 +1,5 @@
+import 'package:flutter_base/generated/l10n.dart';
+
 enum ProcessStatus { initial, busy, completed, error }
 
 class ProcessState {
@@ -26,4 +28,14 @@ class ProcessState {
     this.errorMsg,
     this.message,
   }) : status = ProcessStatus.error;
+
+  ProcessState.noNetwork()
+      : status = ProcessStatus.error,
+        message = S.current.labelNoConnection,
+        errorMsg = S.current.labelPleaseCheckYourInternetConnection;
+
+  ProcessState.noData()
+      : status = ProcessStatus.error,
+        message = S.current.labelNoData,
+        errorMsg = "";
 }

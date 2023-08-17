@@ -9,6 +9,7 @@
 .history
 .svn/
 migrate_working_dir/
+scripts/firebase/*
 
 # IntelliJ related
 *.iml
@@ -31,6 +32,7 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 /build/
+pubspec.lock
 
 # Symbolication related
 app.*.symbols
@@ -43,3 +45,5 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 /pubspec.lock
+
+/macos/Podfile.lock

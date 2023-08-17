@@ -1,9 +1,9 @@
 import 'package:drift/drift.dart';
 import 'package:flutter/foundation.dart';
-import 'package:thinkhub/src/domain/database/auth_token_dao.dart';
-import 'package:thinkhub/src/domain/database/core/shared_db.dart';
-import 'package:thinkhub/src/domain/database/notification_dao.dart';
-import 'package:thinkhub/src/domain/database/user_dao.dart';
+import 'package:flutter_base/src/domain/database/auth_token_dao.dart';
+import 'package:flutter_base/src/domain/database/core/shared_db.dart';
+import 'package:flutter_base/src/domain/database/notification_dao.dart';
+import 'package:flutter_base/src/domain/database/user_dao.dart';
 
 part 'app_database.g.dart';
 
@@ -20,7 +20,7 @@ part 'app_database.g.dart';
   ],
 )
 class AppDatabase extends _$AppDatabase {
-  AppDatabase(QueryExecutor e) : super(e);
+  AppDatabase(super.e);
 
   static AppDatabase? _instance;
 
@@ -53,7 +53,6 @@ class AppDatabase extends _$AppDatabase {
           await transaction(() async {
             try {
               // await migrationTo2(from, m); //1.0.0
-
             } catch (e) {
               await _deleteTables(m);
               rethrow;

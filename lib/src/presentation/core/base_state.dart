@@ -1,31 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_base/generated/l10n.dart';
+import 'package:flutter_base/src/presentation/widgets/dialog/app_dialog.dart';
+import 'package:flutter_base/src/utils/string_utils.dart';
 
 abstract class BaseState<T extends StatefulWidget> extends State<T> {
-  fieldFocusChange(
+  void focusChange(
     BuildContext context,
-    FocusNode currentFocus,
+    FocusNode? currentFocus,
     FocusNode nextFocus,
   ) {
-    currentFocus.unfocus();
+    currentFocus?.unfocus();
     FocusScope.of(context).requestFocus(nextFocus);
   }
 
-  showSnackBar(String message, Duration time, SnackBarAction? action) {
-    SnackBar snackBar;
-    if (action == null) {
-      snackBar = SnackBar(
-        content: Text(message),
-        duration: time,
-      );
-    } else {
-      snackBar = SnackBar(
-        content: Text(message),
-        action: action,
-        duration: time,
-      );
-    }
+  void showMessage(String? message, {Duration? time, SnackBarAction? action}) {
+    if (message == null) return;
 
     // Find the Scaffold in the Widget tree and use it to show a SnackBar!
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        action: action,
+        duration: time ?? const Duration(seconds: 2),
+      ),
+    );
+  }
+
+  void showMessageDialog(BuildContext context, String value) {
+    if (StringUtils.isNotNullAndEmpty(value)) {
+      openAppDialog(
+        context,
+        title: value,
+        positiveButtonText: S.current.btnOk.toUpperCase(),
+      );
+    }
   }
 }

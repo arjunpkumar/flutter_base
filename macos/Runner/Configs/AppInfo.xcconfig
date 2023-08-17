@@ -8,7 +8,7 @@
 PRODUCT_NAME = thinkhub
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.thinkpalm.thinkhub
+PRODUCT_BUNDLE_IDENTIFIER = com.thinkpalm.flutterbase
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2023 com.thinkpalm. All rights reserved.

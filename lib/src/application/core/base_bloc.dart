@@ -1,16 +1,34 @@
 import 'package:bloc/bloc.dart';
+import 'package:flutter_base/src/application/core/base_bloc_event.dart';
+import 'package:flutter_base/src/application/core/base_bloc_state.dart';
+import 'package:flutter_base/src/utils/string_utils.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:thinkhub/src/application/core/base_bloc_event.dart';
-import 'package:thinkhub/src/application/core/base_bloc_state.dart';
-import 'package:thinkhub/src/application/core/process_state.dart';
 
 abstract class BaseBloc<Event extends BaseBlocEvent,
     State extends BaseBlocState> extends Bloc<Event, State> {
-  final processState = BehaviorSubject<ProcessState>();
+  final _message = PublishSubject<String>();
+  final _dialogMessage = PublishSubject<String>();
 
   BaseBloc(super.initialState);
 
+  Stream<String> get message => _message;
+
+  Stream<String> get dialogMessage => _dialogMessage;
+
+  void showMessage(String? message) {
+    if (!_message.isClosed && StringUtils.isNotNullAndEmpty(message)) {
+      _message.add(message!);
+    }
+  }
+
+  void showMessageDialog(String? message) {
+    if (!_dialogMessage.isClosed && StringUtils.isNotNullAndEmpty(message)) {
+      _dialogMessage.add(message!);
+    }
+  }
+
   void dispose() {
-    processState.close();
+    _message.close();
+    _dialogMessage.close();
   }
 }
