@@ -25,18 +25,18 @@ import 'package:flutter_base/src/presentation/widgets/app_version_widget.dart';
 import 'package:flutter_base/src/utils/deeplink_handler.dart';
 import 'package:flutter_base/src/utils/deeplink_navigator.dart';
 import 'package:flutter_base/src/utils/error_logger.dart';
+import 'package:flutter_base/src/utils/file_util.dart';
+import 'package:flutter_base/src/utils/guard.dart';
 import 'package:flutter_base/src/utils/notifications_handler.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hive/hive.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
-Future<void> initApp() async {
+Future<void> _init() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   if (kIsWeb || Platform.isWindows) {
@@ -45,21 +45,16 @@ Future<void> initApp() async {
     );
   } else {
     await Firebase.initializeApp();
+    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
   }
+
   if (kIsWeb || !Platform.isWindows) {
     await FirebaseRemoteConfig.instance.ensureInitialized();
   }
 
-  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
-
-  // final shouldEnablePerformanceMonitoring =
-  //     Config.appFlavor is Production && Config.appMode == AppMode.release;
-
-  final documentsDirectory = await getApplicationDocumentsDirectory();
-  final path = !kIsWeb && Platform.isWindows
-      ? p.join(documentsDirectory.path, "/FlutterBase")
-      : documentsDirectory.path;
-  Hive.init(path);
+  if (!kIsWeb) {
+    Hive.init(await FileUtil.getApplicationPath());
+  }
 
   // Disable DebugPrint in Release Mode
   if (Config.appMode == AppMode.release) {
@@ -84,14 +79,19 @@ Future<void> initApp() async {
     }
   }
 
-// Sync Configs
-  try {
+  // Sync Configs
+  await Guard.runAsync(() async {
     final configsRepository = ConfigRepository.instance();
-    await configsRepository.initConfig();
-    await configsRepository.syncConfig();
-  } catch (e) {
-    debugPrint(e.toString());
-  }
+
+    if (kIsWeb || !Platform.isWindows) {
+      await Future.wait([
+        configsRepository.initConfig(),
+        configsRepository.syncConfig(),
+      ]);
+    } else if (Platform.isWindows) {
+      await provideRemoteConfigRepository().fetchAndUpdateRemoteConfigList();
+    }
+  });
 
 /*  if(Config.appFlavor is! Production && Config.appMode != AppMode.release){
     final driver = StorageServerDriver(
@@ -100,9 +100,12 @@ Future<void> initApp() async {
     );
     driver.addSQLServer(SQLDatabaseServer);
   }*/
+}
 
+Future<void> initApp() async {
   runZonedGuarded<Future<void>>(
     () async {
+      await _init();
       runApp(App());
     },
     (error, stackTrace) {

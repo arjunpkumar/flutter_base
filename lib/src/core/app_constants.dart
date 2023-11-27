@@ -17,7 +17,13 @@ const whiteListDocumentExtensions = [
   '.docx',
   '.jpg',
   '.jpeg',
-  '.png'
+  '.png',
+  '.txt',
+  '.xls',
+  '.xlsx',
+  '.mp3',
+  '.mp4',
+  '.mov',
 ];
 
 const whiteListDocumentMimeTypes = [
@@ -26,7 +32,9 @@ const whiteListDocumentMimeTypes = [
   'image/jpeg',
   'image/png',
   'image/jpg',
-  'application/pdf'
+  'application/pdf',
+  'text/plain',
+  'audio/',
 ];
 
 const whiteListDocumentUtiTypes = [
@@ -54,7 +62,7 @@ const whiteListAudioExtensions = [
   '.wav',
   '.wma',
   '.aac',
-  'aud'
+  'aud',
 ];
 
 const whiteListVideoExtensions = [
@@ -89,7 +97,7 @@ const whiteListDocumentExtensionsForChat = [
   '.xlsx',
   'doc',
   'docx',
-  'aac'
+  'aac',
 ];
 
 const whiteListVideoExtensionsForChat = [
@@ -97,7 +105,7 @@ const whiteListVideoExtensionsForChat = [
   '.mkv',
   '.flv',
   '.mp4',
-  '.mpg'
+  '.mpg',
 ];
 
 const whiteListPdfMimeType = [
@@ -131,34 +139,38 @@ class Units {
   static const double kXXLPadding = 7 * _kPaddingUnit;
   static const double kXXXLPadding = 8 * _kPaddingUnit;
 
-  static const double kCardBorderRadius = 12;
-  static const double kXSCardBorderRadius = 6;
-  static const double kCardElevation = 4;
-
-  static const double kButtonBorderRadius = 8;
-  static const double kButtonElevation = 4;
-  static const double kButtonHeight = 44;
-  static const double kButtonWidth = 140;
-  static const double kButtonHeightSmall = 32;
-
-  static const double kExpandedHeight = 190;
-  static const double kMinExpandedHeight = 100;
-  static const double kVeryMinExpandedHeight = 80;
-  static const double kContentOffSet = 50;
   static const double kAppBarHeight = 64;
-
-  static const double kLoaderHeight = 24;
   static const double kAppIconSize = 24;
-  static const double kAppIconSizeSmall = 18;
-
-  static const double kButtonBorderWidth = 1;
-  static const double kAppIconSizeLarge = 32;
   static const double kAppIconSizeExtraSmall = 12;
-  static const double kShadowBoxHeight = 60;
+  static const double kAppIconSizeLarge = 32;
+  static const double kAppIconSizeMedium = 28;
+  static const double kAppIconSizeSmall = 18;
+  static const double kButtonBorderRadius = 8;
+  static const double kButtonBorderWidth = 1;
+  static const double kButtonElevation = 4;
+  static const double kButtonHeight = 36;
+  static const double kButtonHeightMedium = 40;
+  static const double kButtonHeightLarge = 44;
+  static const double kButtonHeightExtraSmall = 24;
+  static const double kButtonHeightSmall = 32;
+  static const double kButtonRadius = 30;
+  static const double kButtonWidth = 140;
+  static const double kCardBorderRadius = 12;
+  static const double kCardBorderRadiusExtraSmall = 6;
+  static const double kCardBorderRadiusLarge = 20;
+  static const double kCardElevation = 4;
+  static const double kContentOffSet = 50;
+  static const double kExpandedHeight = 190;
   static const double kLineHeight = 1;
+  static const double kLoaderHeight = 24;
+  static const double kMinExpandedHeight = 100;
+  static const double kMinExpandedWidth = 90;
+  static const double kShadowBoxHeight = 60;
   static const double kShowDialogueBoxMaxHeight = 280;
   static const double kShowDialogueBoxMinHeight = 100;
-  static const double kMinExpandedWidth = 90;
+  static const double kTextBoxHeight = 50;
+  static const double kTextBoxRadius = 30;
+  static const double kVeryMinExpandedHeight = 80;
   static const double kZero = 0;
 }
 

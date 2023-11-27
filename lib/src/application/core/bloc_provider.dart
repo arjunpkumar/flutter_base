@@ -3,7 +3,9 @@ import 'package:flutter_base/src/application/web_view/web_view_bloc.dart';
 import 'package:flutter_base/src/domain/core/repository_provider.dart';
 import 'package:flutter_base/src/presentation/web_view/web_view_page.dart';
 import 'package:flutter_base/src/utils/device_token_helper.dart';
+import 'package:flutter_base/src/utils/file_util.dart';
 import 'package:flutter_base/src/utils/notification_util.dart';
+import 'package:image_picker/image_picker.dart';
 
 SplashBloc provideSplashBloc() {
   return SplashBloc(
@@ -22,6 +24,7 @@ WebViewBloc provideWebViewBloc(WebViewArgument argument) {
     alternateSuccessUrl: argument.alternateSuccessUrl,
     failureUrl: argument.failureUrl,
     isBackConfirmationRequired: argument.isBackConfirmationRequired,
+    fileUtil: provideFileUtil(),
   );
 }
 
@@ -35,5 +38,11 @@ DeviceTokenHelper provideDeviceTokenHelper() {
 NotificationUtil provideNotificationUtil() {
   return NotificationUtil(
     networkValidator: provideNetworkValidator(),
+  );
+}
+
+FileUtil provideFileUtil() {
+  return FileUtil(
+    imagePicker: ImagePicker(),
   );
 }

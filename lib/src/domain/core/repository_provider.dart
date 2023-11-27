@@ -1,14 +1,18 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_base/src/domain/auth/auth_repository.dart';
 import 'package:flutter_base/src/domain/auth/auth_service.dart';
 import 'package:flutter_base/src/domain/auth/user_repository.dart';
 import 'package:flutter_base/src/domain/auth/user_service.dart';
 import 'package:flutter_base/src/domain/core/config_repository.dart';
 import 'package:flutter_base/src/domain/core/log_services.dart';
+import 'package:flutter_base/src/domain/core/remote_config/remote_config_repository.dart';
+import 'package:flutter_base/src/domain/core/remote_config/remote_config_service.dart';
 import 'package:flutter_base/src/domain/database/auth_settings_dao.dart';
 import 'package:flutter_base/src/domain/database/core/app_database.dart';
+import 'package:flutter_base/src/domain/database/remote_config_dao.dart';
 import 'package:flutter_base/src/domain/fcm/device_token_repository.dart';
 import 'package:flutter_base/src/domain/fcm/device_token_service.dart';
 import 'package:flutter_base/src/utils/biometric_local_auth_utils.dart';
@@ -19,6 +23,16 @@ import 'package:local_auth/local_auth.dart';
 
 ConfigRepository provideConfigRepository() {
   return ConfigRepository.instance();
+}
+
+RemoteConfigRepository provideRemoteConfigRepository() {
+  return RemoteConfigRepository.instance ??= RemoteConfigRepository(
+    dao: RemoteConfigDao(),
+    service: RemoteConfigService(
+      configRepository: provideConfigRepository(),
+      assetBundle: rootBundle,
+    ),
+  );
 }
 
 FlutterSecureStorage provideFlutterSecureStorage() {

@@ -1,11 +1,17 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_base/src/application/core/base_bloc.dart';
 import 'package:flutter_base/src/application/web_view/web_view_event.dart';
 import 'package:flutter_base/src/application/web_view/web_view_state.dart';
 import 'package:flutter_base/src/domain/auth/auth_repository.dart';
+import 'package:flutter_base/src/utils/file_util.dart';
 import 'package:flutter_base/src/utils/network_utils.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:webview_flutter_android/webview_flutter_android.dart'
+    as webview_android;
 
 class WebViewBloc extends BaseBloc<WebViewEvent, WebViewState> {
   final AuthRepository authRepository;
+  final FileUtil fileUtil;
   final bool isHeaderRequired;
   final bool isBackConfirmationRequired;
   final String url;
@@ -15,7 +21,6 @@ class WebViewBloc extends BaseBloc<WebViewEvent, WebViewState> {
   final String? failureUrl;
 
   String? currentUrl;
-  Map<String, String>? headers;
   bool isPageLoading = false;
 
   WebViewBloc({
@@ -23,27 +28,64 @@ class WebViewBloc extends BaseBloc<WebViewEvent, WebViewState> {
     required this.isHeaderRequired,
     required this.url,
     required this.title,
+    required this.fileUtil,
     this.successUrl,
     this.alternateSuccessUrl,
     this.failureUrl,
     this.isBackConfirmationRequired = false,
   }) : super(WebViewState()) {
-    if (isHeaderRequired) {
-      setHeader();
-    }
+    on<WebViewEvent>(
+      (event, emit) => emit(
+        state.copyWith()..processState = event.processState,
+      ),
+    );
+    on<InitWebViewEvent>((event, emit) => _onWebViewInit(event, emit));
+    on<WebViewControllerInitiatedEvent>(
+      (event, emit) => emit(state.copyWith(isControllerInitiated: true)),
+    );
 
-    on<WebViewEvent>((event, emit) {
-      emit(state.copyWith()..processState = event.processState);
-    });
+    add(InitWebViewEvent());
   }
 
-  Future<void> setHeader() async {
+  Future<void> _onWebViewInit(
+    InitWebViewEvent event,
+    Emitter<WebViewState> emit,
+  ) async {
+    if (isHeaderRequired) {
+      await setHeader(emit);
+    } else {
+      emit(state.copyWith(isInitCompleted: true));
+    }
+  }
+
+  Future<void> setHeader(Emitter<WebViewState> emit) async {
     final map = await getHeader();
-    headers = map.map((key, value) => MapEntry(key, value.toString()));
+    emit(
+      state.copyWith(
+        headers: map.map((key, value) => MapEntry(key, value.toString())),
+        isInitCompleted: true,
+      ),
+    );
   }
 
   Future<Map<String, dynamic>> getHeader() async {
     final authToken = await authRepository.getActiveToken();
-    return getHeaders(authToken);
+    return getHeaders(authToken: authToken);
+  }
+
+  Future<List<String>> initAndroidFilePicker(
+    webview_android.FileSelectorParams fileSelectorParams,
+  ) async {
+    final xFile = await fileUtil.pickDocument().onError(
+      (e, stackTrace) {
+        debugPrint(e.toString());
+        return null;
+      },
+    );
+
+    if (xFile == null) {
+      return [];
+    }
+    return [xFile.path];
   }
 }

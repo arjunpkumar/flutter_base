@@ -1,4 +1,5 @@
 import 'package:flutter_base/src/domain/database/base_hive_dao.dart';
+import 'package:flutter_base/src/utils/extensions.dart';
 import 'package:hive/hive.dart';
 
 class SettingsDao extends BaseHiveDao {
@@ -16,7 +17,7 @@ class SettingsDao extends BaseHiveDao {
   Future<bool> isSecurityEnabled() async {
     final box = await getBox();
     final value = await box.get(kUserSecurity);
-    return (value as bool) ?? true;
+    return toBool(value) ?? true;
   }
 
   @override

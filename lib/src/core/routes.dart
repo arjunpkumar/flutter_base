@@ -28,10 +28,9 @@ Route<dynamic>? generatedRoutes(RouteSettings settings) {
       if (settings.arguments != null && settings.arguments is WebViewArgument) {
         return _getWebViewRoute(
           settings,
-          settings.arguments as WebViewArgument,
+          settings.arguments! as WebViewArgument,
         );
       }
-      break;
   }
   return null;
 }

@@ -2,19 +2,21 @@ import 'package:dio/dio.dart';
 import 'package:flutter_base/config.dart';
 import 'package:flutter_base/src/domain/auth/auth_repository.dart';
 import 'package:flutter_base/src/domain/database/core/app_database.dart';
+import 'package:flutter_base/src/utils/string_utils.dart';
 
 Future<Options> getDioOptions({required AuthRepository authRepository}) async {
-  final activeSessionToken = await authRepository.getActiveToken();
+  final authToken = await authRepository.getActiveToken();
   return Options(
-    headers: getHeaders(activeSessionToken),
+    headers: getHeaders(authToken: authToken),
   );
 }
 
-Map<String, dynamic> getHeaders(AuthToken? activeSessionToken) {
+Map<String, dynamic> getHeaders({AuthToken? authToken, String? userToken}) {
   return {
-    if (activeSessionToken != null)
-      'Authorization': 'Bearer ${activeSessionToken.accessToken}',
-    'app': 'FlutterBase',
+    if (authToken != null) 'Authorization': 'Bearer ${authToken.accessToken}',
+    if (StringUtils.isNotNullAndEmpty(userToken))
+      'Authorization': 'Bearer $userToken',
+    'app': 'CX Falcon',
     'version': Config.getVersionName(),
     'build': Config.getBuildNumber(),
     'source': Config.appSource,

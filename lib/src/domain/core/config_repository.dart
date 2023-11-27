@@ -3,10 +3,12 @@ import 'dart:io';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_base/src/utils/extensions.dart';
+import 'package:flutter_base/src/utils/guard.dart';
 
 class ConfigRepository {
   static ConfigRepository? _instance;
-  late FirebaseRemoteConfig _config;
+  FirebaseRemoteConfig? _config;
 
   ConfigRepository._() {
     _config = FirebaseRemoteConfig.instance;
@@ -17,28 +19,33 @@ class ConfigRepository {
   }
 
   Future<void> initConfig() async {
-    await _config.setConfigSettings(
-      RemoteConfigSettings(
-        minimumFetchInterval: const Duration(milliseconds: 1),
-        fetchTimeout: const Duration(minutes: 2),
-      ),
-    );
-    _config.setDefaults(_defaultConfig);
+    if (kIsWeb || !Platform.isWindows) {
+      await Guard.runAsync(() async {
+        await _config?.setConfigSettings(
+          RemoteConfigSettings(
+            minimumFetchInterval: const Duration(milliseconds: 1),
+            fetchTimeout: const Duration(minutes: 2),
+          ),
+        );
+        await _config?.setDefaults(_defaultConfig);
+      });
+    }
   }
 
   Future<void> syncConfig() async {
-    final lastFetchTime = _config.lastFetchTime;
+    if (_config == null) return;
+    final lastFetchTime = _config!.lastFetchTime;
     if (lastFetchTime
         .isBefore(DateTime.now().subtract(const Duration(seconds: 1)))) {
       try {
-        if (kIsWeb || !Platform.isWindows) await _config.fetch();
-        await _config.activate();
+        if (kIsWeb || !Platform.isWindows) await _config!.fetch();
+        await _config!.activate();
       } catch (err) {
         debugPrint(err.toString());
         if ([
           RemoteConfigFetchStatus.noFetchYet,
-          RemoteConfigFetchStatus.failure
-        ].contains(_config.lastFetchStatus)) {
+          RemoteConfigFetchStatus.failure,
+        ].contains(_config!.lastFetchStatus)) {
           throw PlatformException(
             code: 'REMOTE_CONFIG_ERROR',
             details: 'RemoteConfig could not be synced!',
@@ -51,7 +58,7 @@ class ConfigRepository {
   bool isInitialFetchCompleted() {
     if (!kIsWeb && Platform.isWindows) return true;
 
-    final lastFetchTime = _config.lastFetchTime;
+    final lastFetchTime = _config!.lastFetchTime;
     return lastFetchTime.isAfter(DateTime(1971));
   }
 
@@ -74,12 +81,12 @@ class ConfigRepository {
 
 // BASE URLs [STAGING]
 
-  String get restBaseUrlStaging => _getString('rest_base_url_staging');
+  String get restBaseUrlStaging => _getString('rest_base_url_stage');
 
   String get authRedirectUriStaging => _getString('auth_redirect_uri_dev');
 
   String get identityServerUrlStaging =>
-      _getString('identity_server_base_url_staging');
+      _getString('identity_server_base_url_stage');
 
   // BASE URLs [PROD]
 
@@ -107,11 +114,11 @@ class ConfigRepository {
   String get clientSecretQA => _getString('client_secret_qa');
 
   // CREDENTIALS [STAGING]
-  String get tenantIDStaging => _getString('tenant_id_staging');
+  String get tenantIDStaging => _getString('tenant_id_stage');
 
-  String get clientIDStaging => _getString('client_id_staging');
+  String get clientIDStaging => _getString('client_id_stage');
 
-  String get clientSecretStaging => _getString('client_secret_staging');
+  String get clientSecretStaging => _getString('client_secret_stage');
 
   // CREDENTIALS [PROD]
   String get tenantIDProd => _getString('tenant_id_prod');
@@ -142,7 +149,7 @@ class ConfigRepository {
 
   int get iOSMinVersionCodeQA => _getInt('ios_min_version_code_qa');
 
-  int get iOSMinVersionCodeStaging => _getInt('ios_min_version_code_staging');
+  int get iOSMinVersionCodeStaging => _getInt('ios_min_version_code_stage');
 
   int get iOSMinVersionCodeProd => _getInt('ios_min_version_code_prod');
 
@@ -151,7 +158,7 @@ class ConfigRepository {
   int get iOSLatestVersionCodeQA => _getInt('ios_latest_version_code_qa');
 
   int get iOSLatestVersionCodeStaging =>
-      _getInt('ios_latest_version_code_staging');
+      _getInt('ios_latest_version_code_stage');
 
   int get iOSLatestVersionCodeProd => _getInt('ios_latest_version_code_prod');
 
@@ -160,7 +167,7 @@ class ConfigRepository {
   int get androidMinVersionCodeQA => _getInt('android_min_version_code_qa');
 
   int get androidMinVersionCodeStaging =>
-      _getInt('android_min_version_code_staging');
+      _getInt('android_min_version_code_stage');
 
   int get androidMinVersionCodeProd => _getInt('android_min_version_code_prod');
 
@@ -171,7 +178,7 @@ class ConfigRepository {
       _getInt('android_latest_version_code_qa');
 
   int get androidLatestVersionCodeStaging =>
-      _getInt('android_latest_version_code_staging');
+      _getInt('android_latest_version_code_stage');
 
   int get androidLatestVersionCodeProd =>
       _getInt('android_latest_version_code_prod');
@@ -191,6 +198,8 @@ class ConfigRepository {
 
   String get googleAPIKeyBrowser => _getString('google_api_key_browser');
 
+  String get restRemoteConfigUrl => _getString('rest_remote_config_url');
+
 /*Excluded Document List*/
 /*  List<String> get excludedDocumentList =>
       List<String>.from(
@@ -199,33 +208,39 @@ class ConfigRepository {
 
   String _getString(String key) {
     if (!kIsWeb && Platform.isWindows) {
-      return _defaultConfig[key] as String? ?? '';
+      return toDefaultString(_defaultConfig[key]);
     }
-    return _config.getString(key);
+    return _config!.getString(key);
   }
 
   int _getInt(String key) {
     if (!kIsWeb && Platform.isWindows) {
-      return _defaultConfig[key] as int? ?? 0;
+      return toDefaultInt(_defaultConfig[key]);
     }
-    return _config.getInt(key);
+    return _config!.getInt(key);
   }
 
-  bool? _getBool(String key) {
+  bool _getBool(String key) {
     if (!kIsWeb && Platform.isWindows) {
-      return _defaultConfig[key] as bool? ?? false;
+      return toDefaultBool(_defaultConfig[key]);
     }
-    return _config.getBool(key);
+    return _config!.getBool(key);
   }
 
   double _getDouble(String key) {
     if (!kIsWeb && Platform.isWindows) {
-      return _defaultConfig[key] as double? ?? 0.0;
+      return toDefaultDouble(_defaultConfig[key]);
     }
-    return _config.getDouble(key);
+    return _config!.getDouble(key);
   }
 }
 
 final _defaultConfig = <String, dynamic>{
-  "rest_base_url_tcube_staging": "https://tptimesheet.thinkpalm.info:2345/api",
+  "rest_base_url_tcube_stage": "https://tptimesheet.thinkpalm.info:2345/api",
+  "rest_remote_config_url":
+      "https://firebaseremoteconfig.googleapis.com/v1/projects/{project_id}/remoteConfig:downloadDefaults",
 };
+
+void updateDefaultConfig(Map<String, dynamic> data) {
+  _defaultConfig.addAll(data);
+}

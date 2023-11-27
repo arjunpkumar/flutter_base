@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_base/generated/l10n.dart';
 import 'package:flutter_base/src/application/core/process_state.dart';
@@ -11,9 +14,11 @@ import 'package:flutter_base/src/presentation/widgets/loader_widget.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:webview_flutter_android/webview_flutter_android.dart'
+    as webview_android;
 
 class WebViewPage extends StatefulWidget {
-  static const route = "/web_view";
+  static const String route = "/web_view";
 
   const WebViewPage({super.key});
 
@@ -33,91 +38,106 @@ class _WebViewPageState extends BaseState<WebViewPage> {
     if (_bloc == null) {
       _bloc = BlocProvider.of<WebViewBloc>(context);
 
-      _controller = WebViewController()
-        ..loadRequest(
-          Uri.parse(_bloc!.url),
-          headers: _bloc!.isHeaderRequired ? _bloc!.headers ?? {} : {},
-        )
-        ..setNavigationDelegate(
-          NavigationDelegate(
-            onNavigationRequest: (request) {
-              if (!mounted) return NavigationDecision.prevent;
-              if (request.url.contains("mailto:")) {
-                launchUrlString(request.url);
-                return NavigationDecision.prevent;
-              }
-              if (_bloc!.successUrl != null || _bloc!.failureUrl != null) {
-                if (request.url.startsWith(_bloc!.successUrl ?? " ")) {
-                  Navigator.pop(context, request.url);
-                  return NavigationDecision.prevent;
-                } else if (request.url.startsWith(_bloc!.failureUrl ?? " ")) {
-                  Navigator.pop(context, null);
-                  return NavigationDecision.prevent;
-                }
-              }
-              return NavigationDecision.navigate;
-            },
-            onProgress: (value) {
-              if (_bloc!.isClosed) return;
-              _bloc!.add(
-                WebViewEvent()
-                  ..processState = value < 100
-                      ? ProcessState.busy()
-                      : ProcessState.completed(),
+      _bloc!.stream.listen(
+        (state) {
+          if (state.isInitCompleted && !state.isControllerInitiated) {
+            _controller = WebViewController()
+              ..loadRequest(
+                Uri.parse(_bloc!.url),
+                headers: _bloc!.isHeaderRequired ? state.headers ?? {} : {},
+              )
+              ..setNavigationDelegate(
+                NavigationDelegate(
+                  onNavigationRequest: (request) {
+                    if (!mounted) return NavigationDecision.prevent;
+                    if (request.url.contains("mailto:")) {
+                      launchUrlString(request.url);
+                      return NavigationDecision.prevent;
+                    }
+                    if (_bloc!.successUrl != null ||
+                        _bloc!.failureUrl != null) {
+                      if (request.url.startsWith(_bloc!.successUrl ?? " ")) {
+                        Navigator.pop(context, request.url);
+                        return NavigationDecision.prevent;
+                      } else if (request.url
+                          .startsWith(_bloc!.failureUrl ?? " ")) {
+                        Navigator.pop(context, null);
+                        return NavigationDecision.prevent;
+                      }
+                    }
+                    return NavigationDecision.navigate;
+                  },
+                  onProgress: (value) {
+                    if (_bloc!.isClosed) return;
+                    _bloc!.add(
+                      WebViewEvent()
+                        ..processState = value < 100
+                            ? ProcessState.busy()
+                            : ProcessState.completed(),
+                    );
+                  },
+                  onWebResourceError: (error) async {
+                    final currentUrl = await _controller!.currentUrl();
+                    debugPrint(error.toString());
+                    if (currentUrl != null &&
+                        !currentUrl.startsWith(_bloc!.successUrl ?? " ") &&
+                        !currentUrl.startsWith(_bloc!.failureUrl ?? " ")) {
+                      _bloc!.add(
+                        WebViewEvent()
+                          ..processState =
+                              ProcessState.error(errorMsg: error.toString()),
+                      );
+                      debugPrint(error.toString());
+                    } else if (currentUrl == null) {
+                      _bloc!.add(
+                        WebViewEvent()
+                          ..processState =
+                              ProcessState.error(errorMsg: error.toString()),
+                      );
+                    }
+                  },
+                  onPageStarted: (url) async {
+                    if (_bloc!.isHeaderRequired && url != _bloc!.currentUrl) {
+                      _bloc!.currentUrl = url;
+                      _controller?.loadRequest(
+                        Uri.parse(url),
+                        headers: state.headers!,
+                      );
+                    }
+                    _bloc!.isPageLoading = true;
+                    _bloc!.add(
+                      WebViewEvent()..processState = ProcessState.busy(),
+                    );
+                  },
+                  onPageFinished: (url) async {
+                    _bloc!.isPageLoading = false;
+
+                    if ((_bloc!.successUrl == null &&
+                            _bloc!.failureUrl == null) ||
+                        (!url.startsWith(_bloc?.successUrl ?? " ") &&
+                            !url.startsWith(_bloc?.failureUrl ?? " "))) {
+                      _bloc!.add(
+                        WebViewEvent()..processState = ProcessState.completed(),
+                      );
+                    }
+
+                    if (url.startsWith(_bloc!.alternateSuccessUrl ?? " ")) {
+                      await _displayTemporaryLoader();
+                    }
+                  },
+                ),
+              )
+              ..setJavaScriptMode(JavaScriptMode.unrestricted)
+              ..setUserAgent(
+                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36",
               );
-            },
-            onWebResourceError: (error) async {
-              final currentUrl = await _controller!.currentUrl();
-              debugPrint(error.toString());
-              if (currentUrl != null &&
-                  !currentUrl.startsWith(_bloc!.successUrl ?? " ") &&
-                  !currentUrl.startsWith(_bloc!.failureUrl ?? " ")) {
-                _bloc!.add(
-                  WebViewEvent()
-                    ..processState =
-                        ProcessState.error(errorMsg: error.toString()),
-                );
-                debugPrint(error.toString());
-              } else if (currentUrl == null) {
-                _bloc!.add(
-                  WebViewEvent()
-                    ..processState =
-                        ProcessState.error(errorMsg: error.toString()),
-                );
-              }
-            },
-            onPageStarted: (url) async {
-              if (_bloc!.isHeaderRequired && url != _bloc!.currentUrl) {
-                _bloc!.currentUrl = url;
-                _controller?.loadRequest(
-                  Uri.parse(url),
-                  headers: _bloc!.headers ?? {},
-                );
-              }
-              _bloc!.isPageLoading = true;
-              _bloc!.add(WebViewEvent()..processState = ProcessState.busy());
-            },
-            onPageFinished: (url) async {
-              _bloc!.isPageLoading = false;
-
-              if ((_bloc!.successUrl == null && _bloc!.failureUrl == null) ||
-                  (!url.startsWith(_bloc?.successUrl ?? " ") &&
-                      !url.startsWith(_bloc?.failureUrl ?? " "))) {
-                _bloc!.add(
-                  WebViewEvent()..processState = ProcessState.completed(),
-                );
-              }
-
-              if (url.startsWith(_bloc!.alternateSuccessUrl ?? " ")) {
-                await _displayTemporaryLoader();
-              }
-            },
-          ),
-        )
-        ..setJavaScriptMode(JavaScriptMode.unrestricted)
-        ..setUserAgent(
-          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36",
-        );
+            if (!kIsWeb && Platform.isAndroid) {
+              _initAndroidFileUploader();
+            }
+            _bloc!.add(WebViewControllerInitiatedEvent());
+          }
+        },
+      );
     }
   }
 
@@ -207,6 +227,16 @@ class _WebViewPageState extends BaseState<WebViewPage> {
           ),
       ],
     );
+  }
+
+  Future<void> _initAndroidFileUploader() async {
+    if (Platform.isAndroid) {
+      final controller =
+          _controller!.platform as webview_android.AndroidWebViewController;
+      await controller.setOnShowFileSelector(
+        (params) => _bloc!.initAndroidFilePicker(params),
+      );
+    }
   }
 }
 

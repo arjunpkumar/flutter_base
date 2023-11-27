@@ -37,7 +37,7 @@ Future<bool?> openAppDialog(
                         content,
                         style: TextStyles.body1Regular(context),
                       ),
-                    if (child != null) child
+                    if (child != null) child,
                   ],
                 )
               : null,

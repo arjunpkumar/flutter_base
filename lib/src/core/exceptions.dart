@@ -31,3 +31,9 @@ class NoNetworkException implements Exception {
 
   NoNetworkException({this.message});
 }
+
+class APIFailedException implements Exception {
+  final String? message;
+
+  APIFailedException({this.message});
+}

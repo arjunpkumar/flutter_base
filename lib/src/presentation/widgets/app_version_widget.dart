@@ -171,7 +171,7 @@ class _AppVersionWidgetState extends State<AppVersionWidget> {
                 TextButton(
                   onPressed: () => openStore(),
                   child: Text(S.current.btnUpdate.toUpperCase()),
-                )
+                ),
               ],
             );
           },

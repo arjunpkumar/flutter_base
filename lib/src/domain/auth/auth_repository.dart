@@ -149,8 +149,8 @@ class AuthRepository {
       await _saveCredentials(null),
     ]);
 
-    bool isNewRouteSameAsCurrent = false;
-    /* Navigator.popUntil(navigatorKey.currentContext!, (route) {
+    /*   bool isNewRouteSameAsCurrent = false;
+     Navigator.popUntil(navigatorKey.currentContext!, (route) {
       if (route.settings.name == LoginPage.route) {
         isNewRouteSameAsCurrent = true;
         return true;

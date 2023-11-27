@@ -16,7 +16,7 @@ class NotificationDao extends DatabaseAccessor<AppDatabase>
             (t) => OrderingTerm(
                   expression: t.updatedAt,
                   mode: OrderingMode.desc,
-                )
+                ),
           ]))
         .watch();
   }
@@ -28,8 +28,8 @@ class NotificationDao extends DatabaseAccessor<AppDatabase>
     if (until == null) {
       return (select(notifications)
             ..orderBy([
-              (t) =>
-                  OrderingTerm(expression: t.updatedAt, mode: OrderingMode.desc)
+              (t) => OrderingTerm(
+                  expression: t.updatedAt, mode: OrderingMode.desc,),
             ])
             ..limit(batchSize))
           .get();
@@ -37,8 +37,8 @@ class NotificationDao extends DatabaseAccessor<AppDatabase>
       return (select(notifications)
             ..where((t) => t.updatedAt.isSmallerThanValue(until))
             ..orderBy([
-              (t) =>
-                  OrderingTerm(expression: t.updatedAt, mode: OrderingMode.desc)
+              (t) => OrderingTerm(
+                  expression: t.updatedAt, mode: OrderingMode.desc,),
             ])
             ..limit(batchSize))
           .get();
@@ -49,7 +49,7 @@ class NotificationDao extends DatabaseAccessor<AppDatabase>
     final records = await (select(notifications)
           ..orderBy([
             (t) =>
-                OrderingTerm(expression: t.updatedAt, mode: OrderingMode.desc)
+                OrderingTerm(expression: t.updatedAt, mode: OrderingMode.desc),
           ])
           ..limit(1))
         .get();
