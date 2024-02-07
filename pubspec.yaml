@@ -41,8 +41,8 @@ dependencies:
   flutter_secure_storage: ^9.0.0
 
   # Drift Database
-  drift: ^2.13.0
-  sqlite3_flutter_libs: ^0.5.17
+  drift: ^2.14.0
+  sqlite3_flutter_libs: ^0.5.20
 
   # NoSQL storage
   hive: ^2.2.3
@@ -51,48 +51,48 @@ dependencies:
   permission_handler: ^11.0.1
 
   #device security based authentication
-  local_auth: ^2.1.7
+  local_auth: ^2.1.8
 
   #to open desired app settings
   app_settings: ^5.1.1
 
   #triggers local notifications
-  flutter_local_notifications: ^16.1.0
+  flutter_local_notifications: ^16.3.2
 
   #for local notification zoned schedule
   flutter_native_timezone_updated_gradle: ^2.0.3
 
   #Access SVG icons
-  flutter_svg: ^2.0.7
+  flutter_svg: ^2.0.9
 
   # Rive Animation
   rive: ^0.9.1
 
   # Lock mechanism
-  synchronized: ^3.1.0
+  synchronized: ^3.1.0+1
 
   # Network Reachability
-  connectivity_plus: ^5.0.1
+  connectivity_plus: ^5.0.2
 
-  device_info_plus: ^9.1.0
+  device_info_plus: ^9.1.2
   package_info_plus: ^4.2.0
   mime: ^1.0.4
 
   collection: ^1.17.2
 
   # Image Cacher
-  cached_network_image: ^3.3.0
+  cached_network_image: ^3.3.1
 
   # File / Directory related plugins
-  path_provider: ^2.1.1
+  path_provider: ^2.1.2
   path: ^1.8.3
 
   # open any file in system app
-  open_file_safe: ^3.2.3
+  open_filex: ^4.4.0
   #  open_file: ^3.2.1
 
   # Url Launcher
-  url_launcher: ^6.1.14
+  url_launcher: ^6.2.4
 
   # Localization
   flutter_localizations:
@@ -113,7 +113,7 @@ dependencies:
 
   # Networking
   http: ^1.1.0
-  dio: ^5.3.3
+  dio: ^5.4.0
 
   # OpenId connect
   oauth2: ^2.0.2
@@ -121,9 +121,9 @@ dependencies:
   # bloc Pattern
   bloc: ^8.1.2
   flutter_bloc: ^8.1.3
-  provider: ^6.0.5
+  provider: ^6.1.1
 
-  image_picker: ^1.0.4
+  image_picker: ^1.0.7
   flutter_document_picker: ^5.2.3
 
   pull_to_refresh: ^2.0.0
@@ -131,8 +131,8 @@ dependencies:
   # Useful for Reactive Programming
   rxdart: ^0.27.7
 
-  webview_flutter: ^4.4.1
-  webview_flutter_android: ^3.12.1
+  webview_flutter: ^4.5.0
+  webview_flutter_android: ^3.14.0
 
   # for creating unique ids
   uuid: ^4.1.0
@@ -142,7 +142,6 @@ dependencies:
   flutter_native_splash: ^2.3.4
 
 dependency_overrides:
-  ffi: ^2.1.0
   http: ^1.1.0
 
 dev_dependencies:

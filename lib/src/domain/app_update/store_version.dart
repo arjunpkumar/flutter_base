@@ -32,13 +32,13 @@ class VersionStatus {
     try {
       final localFields = localVersion.split('.');
       final storeFields = storeVersion.split('.');
-      String localPad = '';
-      String storePad = '';
+      final StringBuffer localPad = StringBuffer();
+      final StringBuffer storePad = StringBuffer();
       for (int i = 0; i < storeFields.length; i++) {
-        localPad = localPad + localFields[i].padLeft(3, '0');
-        storePad = storePad + storeFields[i].padLeft(3, '0');
+        localPad.write(localFields[i].padLeft(3, '0'));
+        storePad.write(storeFields[i].padLeft(3, '0'));
       }
-      return localPad.compareTo(storePad) < 0;
+      return localPad.toString().compareTo(storePad.toString()) < 0;
     } catch (e) {
       return localVersion.compareTo(storeVersion).isNegative;
     }
