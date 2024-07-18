@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_base/src/application/core/base_bloc.dart';
 import 'package:flutter_base/src/application/web_view/web_view_event.dart';
 import 'package:flutter_base/src/application/web_view/web_view_state.dart';
@@ -6,8 +5,6 @@ import 'package:flutter_base/src/domain/auth/auth_repository.dart';
 import 'package:flutter_base/src/utils/file_util.dart';
 import 'package:flutter_base/src/utils/network_utils.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:webview_flutter_android/webview_flutter_android.dart'
-    as webview_android;
 
 class WebViewBloc extends BaseBloc<WebViewEvent, WebViewState> {
   final AuthRepository authRepository;
@@ -71,21 +68,5 @@ class WebViewBloc extends BaseBloc<WebViewEvent, WebViewState> {
   Future<Map<String, dynamic>> getHeader() async {
     final authToken = await authRepository.getActiveToken();
     return getHeaders(authToken: authToken);
-  }
-
-  Future<List<String>> initAndroidFilePicker(
-    webview_android.FileSelectorParams fileSelectorParams,
-  ) async {
-    final xFile = await fileUtil.pickDocument().onError(
-      (e, stackTrace) {
-        debugPrint(e.toString());
-        return null;
-      },
-    );
-
-    if (xFile == null) {
-      return [];
-    }
-    return [xFile.path];
   }
 }

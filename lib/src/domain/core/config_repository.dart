@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:firebase_remote_config/firebase_remote_config.dart';
@@ -18,8 +19,18 @@ class ConfigRepository {
     return _instance ??= ConfigRepository._();
   }
 
+  @visibleForTesting
+  factory ConfigRepository.fromMock(ConfigRepository instance) {
+    return _instance = instance;
+  }
+
+  @visibleForTesting
+  void setFirebaseRemoteConfig(FirebaseRemoteConfig config) {
+    _config = config;
+  }
+
   Future<void> initConfig() async {
-    if (kIsWeb || !Platform.isWindows) {
+    if (kIsWeb || !(Platform.isWindows || Platform.isMacOS)) {
       await Guard.runAsync(() async {
         await _config?.setConfigSettings(
           RemoteConfigSettings(
@@ -36,9 +47,11 @@ class ConfigRepository {
     if (_config == null) return;
     final lastFetchTime = _config!.lastFetchTime;
     if (lastFetchTime
-        .isBefore(DateTime.now().subtract(const Duration(seconds: 1)))) {
+        .isBefore(DateTime.now().subtract(const Duration(seconds: 5)))) {
       try {
-        if (kIsWeb || !Platform.isWindows) await _config!.fetch();
+        if (kIsWeb || !(Platform.isWindows || Platform.isMacOS)) {
+          await _config!.fetch();
+        }
         await _config!.activate();
       } catch (err) {
         debugPrint(err.toString());
@@ -56,10 +69,16 @@ class ConfigRepository {
   }
 
   bool isInitialFetchCompleted() {
-    if (!kIsWeb && Platform.isWindows) return true;
+    if (!kIsWeb && (Platform.isWindows || Platform.isMacOS)) return true;
 
     final lastFetchTime = _config!.lastFetchTime;
     return lastFetchTime.isAfter(DateTime(1971));
+  }
+
+  Future<void> updateDefaultConfig(Map<String, dynamic> defaultConfig) async {
+    if (!kIsWeb && (Platform.isWindows || Platform.isMacOS)) return;
+
+    await _config?.setDefaults(defaultConfig);
   }
 
   // BASE URLs [DEV]
@@ -200,6 +219,12 @@ class ConfigRepository {
 
   String get restRemoteConfigUrl => _getString('rest_remote_config_url');
 
+  String get restRemoteConfigProviderUrl =>
+      _getString('rest_remote_config_provider_url');
+
+  /*Synergy Proxy*/
+  String get synergyProxy => _getString('synergy_proxy_url');
+
 /*Excluded Document List*/
 /*  List<String> get excludedDocumentList =>
       List<String>.from(
@@ -239,8 +264,12 @@ final _defaultConfig = <String, dynamic>{
   "rest_base_url_tcube_stage": "https://tptimesheet.thinkpalm.info:2345/api",
   "rest_remote_config_url":
       "https://firebaseremoteconfig.googleapis.com/v1/projects/{project_id}/remoteConfig:downloadDefaults",
+  "rest_remote_config_provider_url":
+      "https://firebase-remote-config-provider-2sh4mcdoza-as.a.run.app",
+  "synergy_proxy_url": "https://ahoy-proxy.synergymarine.in",
 };
 
-void updateDefaultConfig(Map<String, dynamic> data) {
+Future<void> updateDefaultConfig(Map<String, dynamic> data) async {
   _defaultConfig.addAll(data);
+  await ConfigRepository.instance().updateDefaultConfig(_defaultConfig);
 }
