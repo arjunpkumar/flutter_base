@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter_base/src/application/model/file_info.dart';
 import 'package:flutter_base/src/core/app_constants.dart';
-import 'package:flutter_base/src/domain/auth/auth_repository.dart';
+import 'package:flutter_base/src/data/auth/auth_repository.dart';
 import 'package:flutter_base/src/utils/extensions.dart';
 import 'package:flutter_base/src/utils/network_utils.dart';
 import 'package:flutter_base/src/utils/string_utils.dart';

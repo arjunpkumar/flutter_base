@@ -4,7 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_base/generated/l10n.dart';
 import 'package:flutter_base/src/core/app.dart';
-import 'package:flutter_base/src/domain/core/repository_provider.dart';
+import 'package:flutter_base/src/data/core/repository_provider.dart';
 import 'package:flutter_base/src/presentation/widgets/dialog/app_dialog.dart';
 import 'package:flutter_base/src/utils/extensions.dart';
 

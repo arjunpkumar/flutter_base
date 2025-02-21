@@ -1,12 +1,12 @@
 import 'package:flutter_base/src/application/core/base_bloc.dart';
 import 'package:flutter_base/src/application/web_view/web_view_event.dart';
 import 'package:flutter_base/src/application/web_view/web_view_state.dart';
-import 'package:flutter_base/src/domain/auth/auth_repository.dart';
+import 'package:flutter_base/src/data/auth/auth_repository.dart';
 import 'package:flutter_base/src/utils/file_util.dart';
 import 'package:flutter_base/src/utils/network_utils.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class WebViewBloc extends BaseBloc<WebViewEvent, WebViewState> {
+class WebViewBloc extends BaseBloc<WebViewEvent, WebViewState, WebViewUIEvent> {
   final AuthRepository authRepository;
   final FileUtil fileUtil;
   final bool isHeaderRequired;
@@ -14,7 +14,7 @@ class WebViewBloc extends BaseBloc<WebViewEvent, WebViewState> {
   final String url;
   final String title;
   final String? successUrl;
-  final String? alternateSuccessUrl;
+  final List<String>? alternateSuccessUrlList;
   final String? failureUrl;
 
   String? currentUrl;
@@ -27,7 +27,7 @@ class WebViewBloc extends BaseBloc<WebViewEvent, WebViewState> {
     required this.title,
     required this.fileUtil,
     this.successUrl,
-    this.alternateSuccessUrl,
+    this.alternateSuccessUrlList,
     this.failureUrl,
     this.isBackConfirmationRequired = false,
   }) : super(WebViewState()..canPop = false) {
@@ -74,4 +74,9 @@ class WebViewBloc extends BaseBloc<WebViewEvent, WebViewState> {
     final authToken = await authRepository.getActiveToken();
     return getHeaders(authToken: authToken);
   }
+
+  @override
+  WebViewUIEvent get getEvent => WebViewUIEvent();
 }
+
+class WebViewUIEvent extends BaseUIEvent {}

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_base/src/presentation/core/theme/colors.dart';
 import 'package:flutter_base/src/presentation/core/theme/text_styles.dart';
+import 'package:flutter_base/src/utils/extensions.dart';
 
 ThemeData getAppThemeData(BuildContext context) {
   return Theme.of(context).copyWith(
@@ -26,7 +27,7 @@ ThemeData getAppThemeData(BuildContext context) {
       fillColor:
           WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
         if (states.contains(WidgetState.disabled)) {
-          return AppColors.primary.withOpacity(.5);
+          return AppColors.primary.setOpacity(.5);
         }
         if (states.contains(WidgetState.selected)) {
           return AppColors.primary;
@@ -38,7 +39,7 @@ ThemeData getAppThemeData(BuildContext context) {
       fillColor:
           WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
         if (states.contains(WidgetState.disabled)) {
-          return AppColors.primary.withOpacity(.5);
+          return AppColors.primary.setOpacity(.5);
         }
         if (states.contains(WidgetState.selected)) {
           return AppColors.primary;
@@ -50,7 +51,7 @@ ThemeData getAppThemeData(BuildContext context) {
       thumbColor:
           WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
         if (states.contains(WidgetState.disabled)) {
-          return AppColors.primary.withOpacity(.5);
+          return AppColors.primary.setOpacity(.5);
         }
         if (states.contains(WidgetState.selected)) {
           return AppColors.primary;
@@ -60,7 +61,7 @@ ThemeData getAppThemeData(BuildContext context) {
       trackColor:
           WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
         if (states.contains(WidgetState.disabled)) {
-          return AppColors.primary.withOpacity(.5);
+          return AppColors.primary.setOpacity(.5);
         }
         if (states.contains(WidgetState.selected)) {
           return AppColors.primary;

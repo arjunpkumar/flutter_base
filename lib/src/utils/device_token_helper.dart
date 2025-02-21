@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter_base/src/domain/auth/user_repository.dart';
-import 'package:flutter_base/src/domain/core/log_services.dart';
-import 'package:flutter_base/src/domain/fcm/device_token_repository.dart';
+import 'package:flutter_base/src/data/auth/user_repository.dart';
+import 'package:flutter_base/src/data/core/log_services.dart';
+import 'package:flutter_base/src/data/fcm/device_token_repository.dart';
 import 'package:flutter_base/src/utils/extensions.dart';
 
 class DeviceTokenHelper {

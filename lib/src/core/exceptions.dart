@@ -32,6 +32,14 @@ class NoNetworkException implements Exception {
   NoNetworkException({this.message});
 }
 
+class NoPendingJobException implements Exception {
+  NoPendingJobException();
+}
+
+class PendingJobException implements Exception {
+  PendingJobException();
+}
+
 class APIFailedException implements Exception {
   final String? message;
 

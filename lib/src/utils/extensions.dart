@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math' as math;
 
-import 'package:collection/collection.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:dio/dio.dart';
 import 'package:drift/drift.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -12,8 +12,10 @@ import 'package:flutter_base/src/core/app_constants.dart';
 import 'package:flutter_base/src/utils/file_util.dart';
 import 'package:flutter_base/src/utils/guard.dart';
 import 'package:flutter_base/src/utils/regex_util.dart';
+import 'package:flutter_base/src/utils/string_utils.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
+import 'package:mime/mime.dart';
 import 'package:path/path.dart' as p;
 
 bool notNull(dynamic source) {
@@ -30,10 +32,9 @@ String getInitials(List<String?>? inputs) {
   }
 
   return inputs
-      .whereNotNull()
-      .map((i) => i.trim())
-      .where((i) => i.isNotEmpty)
-      .map((s) => s.substring(0, 1))
+      .map((i) => i?.trim())
+      .where((i) => StringUtils.isNotNullAndEmpty(i))
+      .map((s) => s!.substring(0, 1))
       .join()
       .toUpperCase();
 }
@@ -112,9 +113,9 @@ DateTime? maxDate(List<DateTime?>? dates) {
   if (dates?.isEmpty ?? true) {
     return null;
   }
-  return dates!.whereNotNull().reduce(
-        (DateTime curr, DateTime next) => next.isAfter(curr) ? next : curr,
-      );
+  return dates!.nonNulls.reduce(
+    (DateTime curr, DateTime next) => next.isAfter(curr) ? next : curr,
+  );
 }
 
 int dataLengthInBytes(dynamic data) {
@@ -149,11 +150,17 @@ String? normalizeDate(String? dateString) {
   return null;
 }
 
-String? formatDate(DateTime? dateTime, {String format = 'dd/MM/yyyy'}) {
+String? formatDate(
+  DateTime? dateTime, {
+  String format = 'dd/MM/yyyy',
+  bool toLocal = true,
+}) {
   if (dateTime == null) {
     return null;
   }
-  return DateFormat(format).format(dateTime.toLocal());
+  return toLocal
+      ? DateFormat(format).format(dateTime.toLocal())
+      : DateFormat(format).format(dateTime);
 }
 
 String? getTimeFormat(DateTime? dateTime, BuildContext? context) {
@@ -221,22 +228,14 @@ Future<bool> isDeviceIOSSimulator() async {
 Future<String> getOSType() async {
   if (kIsWeb) return "Web";
 
-  switch (defaultTargetPlatform) {
-    case TargetPlatform.iOS:
-      return "iOS";
-    case TargetPlatform.android:
-      return "Android";
-    case TargetPlatform.fuchsia:
-      return "Fuchsia";
-    case TargetPlatform.linux:
-      return "Linux";
-    case TargetPlatform.macOS:
-      return "MacOS";
-    case TargetPlatform.windows:
-      return "Windows";
-    default:
-      return "Other";
-  }
+  return switch (defaultTargetPlatform) {
+    TargetPlatform.iOS => "iOS",
+    TargetPlatform.android => "Android",
+    TargetPlatform.fuchsia => "Fuchsia",
+    TargetPlatform.linux => "Linux",
+    TargetPlatform.macOS => "MacOS",
+    TargetPlatform.windows => "Windows"
+  };
 }
 
 String encodeToBase64(String string) {
@@ -287,6 +286,18 @@ extension StringFormatting on String {
   String addQueryParam(String key, dynamic value) {
     return "$this${contains('?') ? '&' : '?'}$key=$value";
   }
+
+  bool startsAnyWith(List<String?>? patternList) {
+    return patternList?.nonNulls.any((pattern) => startsWith(pattern)) ?? false;
+  }
+
+  bool operator >(String other) => compareTo(other) > 0;
+
+  bool operator <(String other) => compareTo(other) < 0;
+
+  bool operator >=(String other) => compareTo(other) >= 0;
+
+  bool operator <=(String other) => compareTo(other) <= 0;
 }
 
 Map<String, dynamic> toGenericMap(dynamic map) {
@@ -376,6 +387,11 @@ extension ColorUtils on Color {
       this,
       blendMode ?? BlendMode.srcIn,
     );
+  }
+
+  Color setOpacity(double opacity) {
+    assert(opacity >= 0.0 && opacity <= 1.0);
+    return withAlpha((255.0 * opacity).round());
   }
 }
 
@@ -505,4 +521,12 @@ extension SizeUnitsConversion on int {
       return "$this Bytes";
     }
   }
+}
+
+String getFileContentType(File file) {
+  return lookupMimeType(file.path) ?? "text/plain";
+}
+
+bool isAPISuccess(Response response) {
+  return toDefaultInt(response.statusCode) ~/ 200 == 1;
 }

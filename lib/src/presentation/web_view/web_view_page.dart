@@ -81,21 +81,33 @@ class _WebViewPageState extends BaseState<WebViewPage> {
                   onWebResourceError: (error) async {
                     final currentUrl = await _controller!.currentUrl();
                     debugPrint(error.toString());
-                    if (currentUrl != null &&
-                        !currentUrl.startsWith(_bloc!.successUrl ?? " ") &&
-                        !currentUrl.startsWith(_bloc!.failureUrl ?? " ")) {
+                    if (currentUrl == null) {
+                      _bloc!.add(
+                        WebViewEvent()
+                          ..processState =
+                              ProcessState.error(errorMsg: error.toString()),
+                      );
+                    } else if (!currentUrl.startsAnyWith(
+                      [
+                        _bloc!.successUrl,
+                        _bloc!.failureUrl,
+                        ...?_bloc!.alternateSuccessUrlList,
+                      ],
+                    )) {
                       _bloc!.add(
                         WebViewEvent()
                           ..processState =
                               ProcessState.error(errorMsg: error.toString()),
                       );
                       debugPrint(error.toString());
-                    } else if (currentUrl == null) {
-                      _bloc!.add(
-                        WebViewEvent()
-                          ..processState =
-                              ProcessState.error(errorMsg: error.toString()),
-                      );
+                    } else {
+                      if (mounted) {
+                        await _displayTemporaryLoader(
+                          context,
+                          state,
+                          currentUrl,
+                        );
+                      }
                     }
                   },
                   onPageStarted: (url) async {
@@ -114,17 +126,15 @@ class _WebViewPageState extends BaseState<WebViewPage> {
                   onPageFinished: (url) async {
                     _bloc!.isPageLoading = false;
 
-                    if ((_bloc!.successUrl == null &&
-                            _bloc!.failureUrl == null) ||
-                        (!url.startsWith(_bloc?.successUrl ?? " ") &&
-                            !url.startsWith(_bloc?.failureUrl ?? " "))) {
+                    if (!url.startsAnyWith(
+                      [_bloc?.successUrl, _bloc?.failureUrl],
+                    )) {
                       _bloc!.add(
                         WebViewEvent()..processState = ProcessState.completed(),
                       );
-                    }
-
-                    if (url.startsWith(_bloc!.alternateSuccessUrl ?? " ")) {
-                      await _displayTemporaryLoader(context, state);
+                    } else if (url
+                        .startsAnyWith(_bloc!.alternateSuccessUrlList)) {
+                      await _displayTemporaryLoader(context, state, url);
                     }
                   },
                 ),
@@ -133,7 +143,7 @@ class _WebViewPageState extends BaseState<WebViewPage> {
               ..setUserAgent(
                 "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36",
               );
-            if (!kIsWeb && Platform.isAndroid) {
+            if (!kIsWeb && Platform.isAndroid && mounted) {
               _initAndroidFileUploader(context);
             }
             _bloc!.add(WebViewControllerInitiatedEvent());
@@ -146,6 +156,7 @@ class _WebViewPageState extends BaseState<WebViewPage> {
   Future<void> _displayTemporaryLoader(
     BuildContext context,
     WebViewState state,
+    String url,
   ) async {
     late BuildContext loaderContext;
     showDialog(
@@ -161,6 +172,7 @@ class _WebViewPageState extends BaseState<WebViewPage> {
     );
     await Future.delayed(const Duration(seconds: 5)).then((value) {
       if (loaderContext.mounted) Navigator.pop(loaderContext);
+      if (context.mounted) Navigator.pop(context, url);
     });
   }
 
@@ -176,32 +188,34 @@ class _WebViewPageState extends BaseState<WebViewPage> {
       builder: (context, state) {
         return PopScope(
           canPop: state.canPop,
-          onPopInvoked: (didPop) async {
-            final url = await _controller?.currentUrl();
-            if (_bloc!.isBackConfirmationRequired) {
-              if (!mounted) return;
-              if (!_bloc!.isPageLoading &&
-                  (url?.startsWith(_bloc!.alternateSuccessUrl ?? ' ') ??
-                      false)) {
+          onPopInvokedWithResult: (didPop, _) async {
+            if (!didPop) {
+              final url = await _controller?.currentUrl();
+              if (_bloc!.isBackConfirmationRequired) {
+                if (!mounted) return;
+                if (!_bloc!.isPageLoading &&
+                    (url?.startsAnyWith(_bloc!.alternateSuccessUrlList) ??
+                        false)) {
+                  _bloc!.add(PopInvoked(url: url));
+                } else {
+                  openAppDialog(
+                    this.context,
+                    title: S.current.labelCancelXConfirmation(_bloc!.title),
+                    positiveButtonText: S.current.btnYesCancel,
+                    negativeButtonText: S.current.btnNo,
+                  ).then(
+                    (value) {
+                      final result = toDefaultBool(value);
+                      if (result) {
+                        _controller?.runJavaScript('window.stop();');
+                        _bloc!.add(PopInvoked());
+                      }
+                    },
+                  );
+                }
+              } else if (!_bloc!.isPageLoading) {
                 _bloc!.add(PopInvoked(url: url));
               }
-
-              openAppDialog(
-                this.context,
-                title: S.current.labelCancelXConfirmation(_bloc!.title),
-                positiveButtonText: S.current.btnYesCancel,
-                negativeButtonText: S.current.btnNo,
-              ).then(
-                (value) {
-                  final result = toDefaultBool(value);
-                  if (result) {
-                    _controller?.runJavaScript('window.stop();');
-                    _bloc!.add(PopInvoked(url: url));
-                  }
-                },
-              );
-            } else if (!_bloc!.isPageLoading) {
-              _bloc!.add(PopInvoked(url: url));
             }
           },
           child: Scaffold(
@@ -223,7 +237,8 @@ class _WebViewPageState extends BaseState<WebViewPage> {
   Widget _getBodyLayout(BuildContext context, WebViewState state) {
     return Stack(
       children: [
-        WebViewWidget(controller: _controller!),
+        if (state.isInitCompleted && state.isControllerInitiated)
+          WebViewWidget(controller: _controller!),
         if (state.processState.status == ProcessStatus.busy)
           const ColoredBox(
             color: AppColors.white,
@@ -279,7 +294,7 @@ class _WebViewPageState extends BaseState<WebViewPage> {
 class WebViewArgument {
   String title;
   String url;
-  String? alternateSuccessUrl;
+  List<String>? alternateSuccessUrlList;
   String? successUrl;
   String? failureUrl;
   bool isHeaderRequired;
@@ -288,7 +303,7 @@ class WebViewArgument {
   WebViewArgument({
     required this.title,
     required this.url,
-    this.alternateSuccessUrl,
+    this.alternateSuccessUrlList,
     this.successUrl,
     this.failureUrl,
     this.isHeaderRequired = false,

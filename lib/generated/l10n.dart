@@ -18,17 +18,20 @@ class S {
   static S? _current;
 
   static S get current {
-    assert(_current != null,
-        'No instance of S was loaded. Try to initialize the S delegate before accessing S.current.');
+    assert(
+      _current != null,
+      'No instance of S was loaded. Try to initialize the S delegate before accessing S.current.',
+    );
     return _current!;
   }
 
   static const AppLocalizationDelegate delegate = AppLocalizationDelegate();
 
   static Future<S> load(Locale locale) {
-    final name = (locale.countryCode?.isEmpty ?? false)
-        ? locale.languageCode
-        : locale.toString();
+    final name =
+        (locale.countryCode?.isEmpty ?? false)
+            ? locale.languageCode
+            : locale.toString();
     final localeName = Intl.canonicalizedLocale(name);
     return initializeMessages(localeName).then((_) {
       Intl.defaultLocale = localeName;
@@ -41,8 +44,10 @@ class S {
 
   static S of(BuildContext context) {
     final instance = S.maybeOf(context);
-    assert(instance != null,
-        'No instance of S present in the widget tree. Did you add S.delegate in localizationsDelegates?');
+    assert(
+      instance != null,
+      'No instance of S present in the widget tree. Did you add S.delegate in localizationsDelegates?',
+    );
     return instance!;
   }
 
@@ -52,12 +57,7 @@ class S {
 
   /// `en`
   String get _locale {
-    return Intl.message(
-      'en',
-      name: '_locale',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('en', name: '_locale', desc: '', args: []);
   }
 
   /// `FlutterBase`
@@ -92,52 +92,27 @@ class S {
 
   /// `Update`
   String get btnUpdate {
-    return Intl.message(
-      'Update',
-      name: 'btnUpdate',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Update', name: 'btnUpdate', desc: '', args: []);
   }
 
   /// `Later`
   String get btnLater {
-    return Intl.message(
-      'Later',
-      name: 'btnLater',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Later', name: 'btnLater', desc: '', args: []);
   }
 
   /// `View`
   String get btnView {
-    return Intl.message(
-      'View',
-      name: 'btnView',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('View', name: 'btnView', desc: '', args: []);
   }
 
   /// `Ok`
   String get btnOk {
-    return Intl.message(
-      'Ok',
-      name: 'btnOk',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Ok', name: 'btnOk', desc: '', args: []);
   }
 
   /// `Cancel`
   String get btnCancel {
-    return Intl.message(
-      'Cancel',
-      name: 'btnCancel',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Cancel', name: 'btnCancel', desc: '', args: []);
   }
 
   /// `{username} is {status}`
@@ -202,32 +177,17 @@ class S {
 
   /// `Ok`
   String get labelOk {
-    return Intl.message(
-      'Ok',
-      name: 'labelOk',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Ok', name: 'labelOk', desc: '', args: []);
   }
 
   /// `Image`
   String get labelImage {
-    return Intl.message(
-      'Image',
-      name: 'labelImage',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Image', name: 'labelImage', desc: '', args: []);
   }
 
   /// `Document`
   String get labelDocument {
-    return Intl.message(
-      'Document',
-      name: 'labelDocument',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Document', name: 'labelDocument', desc: '', args: []);
   }
 
   /// `No Network Available`
@@ -262,32 +222,17 @@ class S {
 
   /// `No Data`
   String get labelNoData {
-    return Intl.message(
-      'No Data',
-      name: 'labelNoData',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('No Data', name: 'labelNoData', desc: '', args: []);
   }
 
   /// `Yes`
   String get btnYes {
-    return Intl.message(
-      'Yes',
-      name: 'btnYes',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Yes', name: 'btnYes', desc: '', args: []);
   }
 
   /// `No`
   String get btnNo {
-    return Intl.message(
-      'No',
-      name: 'btnNo',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('No', name: 'btnNo', desc: '', args: []);
   }
 
   /// `No Connection`
@@ -312,42 +257,22 @@ class S {
 
   /// `Try Again`
   String get btnTryAgain {
-    return Intl.message(
-      'Try Again',
-      name: 'btnTryAgain',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Try Again', name: 'btnTryAgain', desc: '', args: []);
   }
 
   /// `Delete`
   String get btnDelete {
-    return Intl.message(
-      'Delete',
-      name: 'btnDelete',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Delete', name: 'btnDelete', desc: '', args: []);
   }
 
   /// `Login`
   String get titleLogin {
-    return Intl.message(
-      'Login',
-      name: 'titleLogin',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Login', name: 'titleLogin', desc: '', args: []);
   }
 
   /// `Logout`
   String get titleLogout {
-    return Intl.message(
-      'Logout',
-      name: 'titleLogout',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Logout', name: 'titleLogout', desc: '', args: []);
   }
 }
 
@@ -355,9 +280,7 @@ class AppLocalizationDelegate extends LocalizationsDelegate<S> {
   const AppLocalizationDelegate();
 
   List<Locale> get supportedLocales {
-    return const <Locale>[
-      Locale.fromSubtags(languageCode: 'en'),
-    ];
+    return const <Locale>[Locale.fromSubtags(languageCode: 'en')];
   }
 
   @override

@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_base/config.dart';
-import 'package:flutter_base/src/domain/auth/auth_repository.dart';
-import 'package:flutter_base/src/domain/database/core/app_database.dart';
+import 'package:flutter_base/src/data/auth/auth_repository.dart';
+import 'package:flutter_base/src/data/database/core/app_database.dart';
 import 'package:flutter_base/src/utils/string_utils.dart';
 
 Future<Options> getDioOptions({required AuthRepository authRepository}) async {

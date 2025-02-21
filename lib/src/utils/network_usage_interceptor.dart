@@ -31,7 +31,7 @@ class NetworkUsageInterceptor extends InterceptorsWrapper {
   }
 
   void _logNetworkUsage(RequestOptions options) {
-/*    provideNetworkUsagesRepository().log(
+  /*  provideNetworkUsageRepository().log(
       sentBytes: options.extra['sent_bytes'] ?? 0,
       receivedBytes: options.extra['received_bytes'] ?? 0,
     );*/

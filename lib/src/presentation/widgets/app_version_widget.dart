@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_base/config.dart';
 import 'package:flutter_base/generated/l10n.dart';
 import 'package:flutter_base/src/core/app_constants.dart';
-import 'package:flutter_base/src/domain/app_update/in_app_update.dart';
-import 'package:flutter_base/src/domain/app_update/store_version.dart';
-import 'package:flutter_base/src/domain/core/config_repository.dart';
+import 'package:flutter_base/src/data/app_update/in_app_update.dart';
+import 'package:flutter_base/src/data/app_update/store_version.dart';
+import 'package:flutter_base/src/data/core/config_repository.dart';
 import 'package:hive/hive.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher_string.dart';
@@ -178,7 +178,7 @@ class _AppVersionWidgetState extends State<AppVersionWidget> {
         );
       case UpdateMode.flexible:
         hasIgnoredPreviously(info.updateVersion).then((hasIgnored) {
-          if (hasIgnored) {
+          if (hasIgnored && !mounted) {
             return null;
           }
           return showDialog(

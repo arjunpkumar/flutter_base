@@ -26,48 +26,55 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
-        "_locale": MessageLookupByLibrary.simpleMessage("en"),
-        "btnCancel": MessageLookupByLibrary.simpleMessage("Cancel"),
-        "btnDelete": MessageLookupByLibrary.simpleMessage("Delete"),
-        "btnLater": MessageLookupByLibrary.simpleMessage("Later"),
-        "btnNo": MessageLookupByLibrary.simpleMessage("No"),
-        "btnOk": MessageLookupByLibrary.simpleMessage("Ok"),
-        "btnTryAgain": MessageLookupByLibrary.simpleMessage("Try Again"),
-        "btnUpdate": MessageLookupByLibrary.simpleMessage("Update"),
-        "btnView": MessageLookupByLibrary.simpleMessage("View"),
-        "btnYes": MessageLookupByLibrary.simpleMessage("Yes"),
-        "btnYesCancel": MessageLookupByLibrary.simpleMessage("Yes, Cancel"),
-        "errWebView": MessageLookupByLibrary.simpleMessage(
-            "Error Loading The Web Page. Try Again Later"),
-        "labelCancelXConfirmation": m0,
-        "labelDocument": MessageLookupByLibrary.simpleMessage("Document"),
-        "labelFlutterBase":
-            MessageLookupByLibrary.simpleMessage("Flutter Base"),
-        "labelImage": MessageLookupByLibrary.simpleMessage("Image"),
-        "labelNoConnection":
-            MessageLookupByLibrary.simpleMessage("No Connection"),
-        "labelNoData": MessageLookupByLibrary.simpleMessage("No Data"),
-        "labelNoNetworkAvailable":
-            MessageLookupByLibrary.simpleMessage("No Network Available"),
-        "labelOk": MessageLookupByLibrary.simpleMessage("Ok"),
-        "labelPleaseCheckYourInternetConnection":
-            MessageLookupByLibrary.simpleMessage(
-                "Please Check Your Internet Connection"),
-        "labelSomethingWentWrong": MessageLookupByLibrary.simpleMessage(
-            "Something Went Wrong. Please Try Again Later"),
-        "messageFlexibleUpdate": MessageLookupByLibrary.simpleMessage(
-            "There is a new version available for this app. Try out new features by updating the app."),
-        "messageImmediateUpdate": MessageLookupByLibrary.simpleMessage(
-            "Kindly update this app to the latest version to improve its compatibility."),
-        "messagePleaseAuthenticateUsingBiometric":
-            MessageLookupByLibrary.simpleMessage(
-                "Please Authenticate Using Biometric or Device Lock Mechanism"),
-        "titleFlexibleUpdate":
-            MessageLookupByLibrary.simpleMessage("Update Available"),
-        "titleImmediateUpdate":
-            MessageLookupByLibrary.simpleMessage("Update Required"),
-        "titleLogin": MessageLookupByLibrary.simpleMessage("Login"),
-        "titleLogout": MessageLookupByLibrary.simpleMessage("Logout"),
-        "userStatus": m1
-      };
+    "_locale": MessageLookupByLibrary.simpleMessage("en"),
+    "btnCancel": MessageLookupByLibrary.simpleMessage("Cancel"),
+    "btnDelete": MessageLookupByLibrary.simpleMessage("Delete"),
+    "btnLater": MessageLookupByLibrary.simpleMessage("Later"),
+    "btnNo": MessageLookupByLibrary.simpleMessage("No"),
+    "btnOk": MessageLookupByLibrary.simpleMessage("Ok"),
+    "btnTryAgain": MessageLookupByLibrary.simpleMessage("Try Again"),
+    "btnUpdate": MessageLookupByLibrary.simpleMessage("Update"),
+    "btnView": MessageLookupByLibrary.simpleMessage("View"),
+    "btnYes": MessageLookupByLibrary.simpleMessage("Yes"),
+    "btnYesCancel": MessageLookupByLibrary.simpleMessage("Yes, Cancel"),
+    "errWebView": MessageLookupByLibrary.simpleMessage(
+      "Error Loading The Web Page. Try Again Later",
+    ),
+    "labelCancelXConfirmation": m0,
+    "labelDocument": MessageLookupByLibrary.simpleMessage("Document"),
+    "labelFlutterBase": MessageLookupByLibrary.simpleMessage("FlutterBase"),
+    "labelImage": MessageLookupByLibrary.simpleMessage("Image"),
+    "labelNoConnection": MessageLookupByLibrary.simpleMessage("No Connection"),
+    "labelNoData": MessageLookupByLibrary.simpleMessage("No Data"),
+    "labelNoNetworkAvailable": MessageLookupByLibrary.simpleMessage(
+      "No Network Available",
+    ),
+    "labelOk": MessageLookupByLibrary.simpleMessage("Ok"),
+    "labelPleaseCheckYourInternetConnection":
+        MessageLookupByLibrary.simpleMessage(
+          "Please Check Your Internet Connection",
+        ),
+    "labelSomethingWentWrong": MessageLookupByLibrary.simpleMessage(
+      "Something Went Wrong. Please Try Again Later",
+    ),
+    "messageFlexibleUpdate": MessageLookupByLibrary.simpleMessage(
+      "There is a new version available for this app. Try out new features by updating the app.",
+    ),
+    "messageImmediateUpdate": MessageLookupByLibrary.simpleMessage(
+      "Kindly update this app to the latest version to improve its compatibility.",
+    ),
+    "messagePleaseAuthenticateUsingBiometric":
+        MessageLookupByLibrary.simpleMessage(
+          "Please Authenticate Using Biometric or Device Lock Mechanism",
+        ),
+    "titleFlexibleUpdate": MessageLookupByLibrary.simpleMessage(
+      "Update Available",
+    ),
+    "titleImmediateUpdate": MessageLookupByLibrary.simpleMessage(
+      "Update Required",
+    ),
+    "titleLogin": MessageLookupByLibrary.simpleMessage("Login"),
+    "titleLogout": MessageLookupByLibrary.simpleMessage("Logout"),
+    "userStatus": m1,
+  };
 }

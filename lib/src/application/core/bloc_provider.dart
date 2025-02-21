@@ -1,6 +1,6 @@
 import 'package:flutter_base/src/application/splash/splash_bloc.dart';
 import 'package:flutter_base/src/application/web_view/web_view_bloc.dart';
-import 'package:flutter_base/src/domain/core/repository_provider.dart';
+import 'package:flutter_base/src/data/core/repository_provider.dart';
 import 'package:flutter_base/src/presentation/web_view/web_view_page.dart';
 import 'package:flutter_base/src/utils/device_token_helper.dart';
 import 'package:flutter_base/src/utils/file_util.dart';
@@ -21,7 +21,7 @@ WebViewBloc provideWebViewBloc(WebViewArgument argument) {
     url: argument.url,
     title: argument.title,
     successUrl: argument.successUrl,
-    alternateSuccessUrl: argument.alternateSuccessUrl,
+    alternateSuccessUrlList: argument.alternateSuccessUrlList,
     failureUrl: argument.failureUrl,
     isBackConfirmationRequired: argument.isBackConfirmationRequired,
     fileUtil: provideFileUtil(),

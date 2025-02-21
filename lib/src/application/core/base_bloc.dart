@@ -4,14 +4,25 @@ import 'package:flutter_base/src/application/core/base_bloc_state.dart';
 import 'package:flutter_base/src/utils/string_utils.dart';
 import 'package:rxdart/rxdart.dart';
 
-abstract class BaseBloc<Event extends BaseBlocEvent,
-    State extends BaseBlocState> extends Bloc<Event, State> {
+abstract class BaseBloc<
+    Event extends BaseBlocEvent,
+    State extends BaseBlocState,
+    UIEvent extends BaseUIEvent> extends Bloc<Event, State> {
+  final _event = PublishSubject<UIEvent>();
   final _message = PublishSubject<String>();
   final _dialogMessage = PublishSubject<String>();
   final _noNetworkError = PublishSubject<void>();
   bool _isDisposed = false;
 
   BaseBloc(super.initialState);
+
+  Stream<UIEvent> get eventStream => _event;
+
+  UIEvent get getEvent;
+
+  void publish(UIEvent event) {
+    if (!_event.isClosed) _event.add(event);
+  }
 
   Stream<String> get message => _message;
 
@@ -34,9 +45,12 @@ abstract class BaseBloc<Event extends BaseBlocEvent,
   bool get isDisposed => _isDisposed;
 
   void dispose() {
+    _event.close();
     _message.close();
     _dialogMessage.close();
     _noNetworkError.close();
     _isDisposed = true;
   }
 }
+
+abstract class BaseUIEvent {}

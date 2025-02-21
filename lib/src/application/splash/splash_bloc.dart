@@ -1,10 +1,10 @@
 import 'package:flutter_base/src/application/core/base_bloc.dart';
 import 'package:flutter_base/src/application/splash/splash_event.dart';
 import 'package:flutter_base/src/application/splash/splash_state.dart';
-import 'package:flutter_base/src/domain/auth/auth_repository.dart';
-import 'package:flutter_base/src/domain/auth/user_repository.dart';
+import 'package:flutter_base/src/data/auth/auth_repository.dart';
+import 'package:flutter_base/src/data/auth/user_repository.dart';
 
-class SplashBloc extends BaseBloc<SplashEvent, SplashState> {
+class SplashBloc extends BaseBloc<SplashEvent, SplashState, SplashUIEvent> {
   final AuthRepository authRepository;
   final UserRepository userRepository;
 
@@ -24,4 +24,9 @@ class SplashBloc extends BaseBloc<SplashEvent, SplashState> {
       },
     );
   }
+
+  @override
+  SplashUIEvent get getEvent => SplashUIEvent();
 }
+
+class SplashUIEvent extends BaseUIEvent {}
