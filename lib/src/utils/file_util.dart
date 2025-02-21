@@ -58,7 +58,7 @@ class FileUtil {
   static Future<String> getExternalPath() async {
     final documentsDirectory = await getExternalStorageDirectory();
     final path = !kIsWeb && Platform.isWindows
-        ? p.join(documentsDirectory!.path, "Ahoy${_getFlavorPath()}/Cache")
+        ? p.join(documentsDirectory!.path, "Flutter Base${_getFlavorPath()}/Cache")
         : documentsDirectory!.path;
     final directory = Directory(path);
     if (!await directory.exists()) await directory.create(recursive: true);
@@ -68,7 +68,7 @@ class FileUtil {
   static Future<String> getDownloadPath() async {
     final documentsDirectory = await getDownloadsDirectory();
     final path = !kIsWeb && Platform.isWindows
-        ? p.join(documentsDirectory!.path, "Ahoy${_getFlavorPath()}/Cache")
+        ? p.join(documentsDirectory!.path, "Flutter Base${_getFlavorPath()}/Cache")
         : documentsDirectory!.path;
     final directory = Directory(path);
     if (!await directory.exists()) await directory.create(recursive: true);
