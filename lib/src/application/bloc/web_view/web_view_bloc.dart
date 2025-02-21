@@ -1,6 +1,6 @@
 import 'package:flutter_base/src/application/core/base_bloc.dart';
-import 'package:flutter_base/src/application/web_view/web_view_event.dart';
-import 'package:flutter_base/src/application/web_view/web_view_state.dart';
+import 'package:flutter_base/src/application/bloc/web_view/web_view_event.dart';
+import 'package:flutter_base/src/application/bloc/web_view/web_view_state.dart';
 import 'package:flutter_base/src/data/auth/auth_repository.dart';
 import 'package:flutter_base/src/utils/file_util.dart';
 import 'package:flutter_base/src/utils/network_utils.dart';

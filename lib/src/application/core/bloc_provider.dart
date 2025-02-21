@@ -1,5 +1,5 @@
-import 'package:flutter_base/src/application/splash/splash_bloc.dart';
-import 'package:flutter_base/src/application/web_view/web_view_bloc.dart';
+import 'package:flutter_base/src/application/bloc/splash/splash_bloc.dart';
+import 'package:flutter_base/src/application/bloc/web_view/web_view_bloc.dart';
 import 'package:flutter_base/src/data/core/repository_provider.dart';
 import 'package:flutter_base/src/presentation/web_view/web_view_page.dart';
 import 'package:flutter_base/src/utils/device_token_helper.dart';

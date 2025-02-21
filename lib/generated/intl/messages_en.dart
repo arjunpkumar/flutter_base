@@ -40,6 +40,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "errWebView": MessageLookupByLibrary.simpleMessage(
       "Error Loading The Web Page. Try Again Later",
     ),
+    "hintDefaultSearch": MessageLookupByLibrary.simpleMessage("Search..."),
     "labelCancelXConfirmation": m0,
     "labelDocument": MessageLookupByLibrary.simpleMessage("Document"),
     "labelFlutterBase": MessageLookupByLibrary.simpleMessage("FlutterBase"),
@@ -67,9 +68,11 @@ class MessageLookup extends MessageLookupByLibrary {
         MessageLookupByLibrary.simpleMessage(
           "Please Authenticate Using Biometric or Device Lock Mechanism",
         ),
+    "titleApp": MessageLookupByLibrary.simpleMessage("FlutterBase"),
     "titleFlexibleUpdate": MessageLookupByLibrary.simpleMessage(
       "Update Available",
     ),
+    "titleHome": MessageLookupByLibrary.simpleMessage("Home"),
     "titleImmediateUpdate": MessageLookupByLibrary.simpleMessage(
       "Update Required",
     ),

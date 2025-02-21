@@ -70,6 +70,16 @@ class S {
     );
   }
 
+  /// `FlutterBase`
+  String get titleApp {
+    return Intl.message('FlutterBase', name: 'titleApp', desc: '', args: []);
+  }
+
+  /// `Home`
+  String get titleHome {
+    return Intl.message('Home', name: 'titleHome', desc: '', args: []);
+  }
+
   /// `Please Authenticate Using Biometric or Device Lock Mechanism`
   String get messagePleaseAuthenticateUsingBiometric {
     return Intl.message(
@@ -85,6 +95,16 @@ class S {
     return Intl.message(
       'Error Loading The Web Page. Try Again Later',
       name: 'errWebView',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Search...`
+  String get hintDefaultSearch {
+    return Intl.message(
+      'Search...',
+      name: 'hintDefaultSearch',
       desc: '',
       args: [],
     );

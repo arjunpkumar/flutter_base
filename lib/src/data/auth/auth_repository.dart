@@ -15,6 +15,8 @@ import 'package:flutter_base/src/data/database/auth_settings_dao.dart';
 import 'package:flutter_base/src/data/database/auth_token_dao.dart';
 import 'package:flutter_base/src/data/database/core/app_database.dart';
 import 'package:flutter_base/src/data/database/settings_dao.dart';
+import 'package:flutter_base/src/presentation/auth/login/login_page.dart';
+import 'package:flutter_base/src/presentation/home/home_page.dart';
 import 'package:flutter_base/src/presentation/widgets/loader_widget.dart';
 import 'package:flutter_base/src/utils/auth/auth_util.dart';
 import 'package:flutter_base/src/utils/extensions.dart';
@@ -208,7 +210,7 @@ class AuthRepository {
       if (lastRefresh == null ||
           DateTime.now().toUtc().difference(lastRefresh).inMinutes >= 4) {
         try {
-        await initRefreshAccessToken();
+          await initRefreshAccessToken();
         } catch (e) {
           debugPrint(e.toString());
         }
@@ -264,19 +266,19 @@ class AuthRepository {
     if (kIsWeb) {
       await authSettingsDao.saveCodeVerifier(codeVerifier);
     } else {
-    await storage.write(
-      key: SecureStorageKey.codeVerifier,
-      value: codeVerifier,
-    );
-  }
+      await storage.write(
+        key: SecureStorageKey.codeVerifier,
+        value: codeVerifier,
+      );
+    }
   }
 
   Future<void> _saveCredentials(oauth2.Credentials? credentials) async {
     if (!kIsWeb) {
-    await storage.write(
-      key: SecureStorageKey.oAuthCredentials,
-      value: credentials?.toJson(),
-    );
+      await storage.write(
+        key: SecureStorageKey.oAuthCredentials,
+        value: credentials?.toJson(),
+      );
     } else {
       await authSettingsDao.saveOAuthCredential(credentials?.toJson());
     }

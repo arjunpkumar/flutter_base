@@ -1,6 +1,6 @@
+import 'package:flutter_base/src/application/bloc/splash/splash_event.dart';
+import 'package:flutter_base/src/application/bloc/splash/splash_state.dart';
 import 'package:flutter_base/src/application/core/base_bloc.dart';
-import 'package:flutter_base/src/application/splash/splash_event.dart';
-import 'package:flutter_base/src/application/splash/splash_state.dart';
 import 'package:flutter_base/src/data/auth/auth_repository.dart';
 import 'package:flutter_base/src/data/auth/user_repository.dart';
 
@@ -13,7 +13,7 @@ class SplashBloc extends BaseBloc<SplashEvent, SplashState, SplashUIEvent> {
     on<RedirectPage>(
       (event, emit) async {
         final authToken = await authRepository.getActiveToken();
-        final user = await userRepository.getActiveUser();
+        final user = await userRepository.getCurrentUser();
         await Future.delayed(const Duration(milliseconds: 2000), () {});
         if (user != null && authToken != null) {
           emit(state.copyWith(redirectToOtp: true));

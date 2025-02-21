@@ -1,8 +1,11 @@
 {
   "_locale": "en",
   "labelFlutterBase": "FlutterBase",
+  "titleApp": "FlutterBase",
+  "titleHome": "Home",
   "messagePleaseAuthenticateUsingBiometric": "Please Authenticate Using Biometric or Device Lock Mechanism",
   "errWebView": "Error Loading The Web Page. Try Again Later",
+  "hintDefaultSearch": "Search...",
   "btnUpdate": "Update",
   "btnLater": "Later",
   "btnView": "View",

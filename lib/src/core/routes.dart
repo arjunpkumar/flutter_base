@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_base/src/application/bloc/web_view/web_view_bloc.dart';
 import 'package:flutter_base/src/application/core/bloc_provider.dart';
-import 'package:flutter_base/src/application/web_view/web_view_bloc.dart';
 import 'package:flutter_base/src/presentation/splash/splash_page.dart';
 import 'package:flutter_base/src/presentation/web_view/web_view_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
