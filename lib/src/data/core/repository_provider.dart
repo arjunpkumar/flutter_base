@@ -56,7 +56,6 @@ FlutterSecureStorage provideFlutterSecureStorage() {
   return const FlutterSecureStorage();
 }
 
-
 AuthUtil provideAuthUtil() {
   return AuthUtil(
     appDatabase: provideAppDatabase(),
@@ -71,7 +70,6 @@ AuthUtil provideAuthUtil() {
 Logger provideLogger() {
   return Logger();
 }
-
 
 NetworkValidator provideNetworkValidator() {
   return NetworkValidator.instance ??= NetworkValidator(
@@ -88,7 +86,6 @@ UserService provideUserService() {
     configRepository: provideConfigRepository(),
   );
 }
-
 
 JobConnectivity provideJobConnectivity() {
   return JobConnectivity(

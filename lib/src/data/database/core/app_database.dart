@@ -1,10 +1,13 @@
 import 'package:drift/drift.dart';
+import 'package:drift/isolate.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_base/src/data/database/auth_token_dao.dart';
 import 'package:flutter_base/src/data/database/core/shared_db.dart';
 import 'package:flutter_base/src/data/database/job_dao.dart';
 import 'package:flutter_base/src/data/database/notification_dao.dart';
 import 'package:flutter_base/src/data/database/user_dao.dart';
+import 'package:flutter_base/src/utils/guard.dart';
 
 part 'app_database.g.dart';
 
@@ -26,9 +29,42 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e);
 
   static AppDatabase? _instance;
+  static DriftIsolate? _driftIsolate;
+
+  static Future<AppDatabase> init(RootIsolateToken isolateToken) async {
+    _driftIsolate ??= await createDriftIsolate(isolateToken);
+    _instance ??= await openDatabase(_driftIsolate!);
+    return _instance!;
+  }
+
+  static bool isInitCompleted() => _instance != null;
 
   factory AppDatabase.instance() {
-    return _instance ??= constructDb();
+    assert(_instance != null,
+        'Database not initialized. Call `AppDatabase.init()` first.');
+    return _instance!;
+  }
+
+  @visibleForTesting
+  factory AppDatabase.fromMock(AppDatabase db) {
+    return _instance = db;
+  }
+
+  static Future<DriftIsolate> createDriftIsolate(
+    RootIsolateToken isolateToken,
+  ) async {
+    final isolate = await DriftIsolate.spawn(() {
+      Guard.run(() {
+        BackgroundIsolateBinaryMessenger.ensureInitialized(isolateToken);
+      });
+      return constructDb();
+    });
+    return isolate;
+  }
+
+  static Future<AppDatabase> openDatabase(DriftIsolate driftIsolate) async {
+    final connection = await driftIsolate.connect();
+    return AppDatabase(connection);
   }
 
   @override

@@ -45,6 +45,7 @@ class AppColors {
   static const Color tundoraDark = Color(0xFF4F4F4F);
   static const Color lightGrey = Color(0xFFE3E3E3);
   static const Color lightGrey1 = Color(0xFFF4F6F6);
+
   // static const Color lightGrey = Color(0xFFDEDEDE);
   static const Color dustyGrey = Color(0xFF989898);
   static const Color grey = Color(0xFF8C8C8C);

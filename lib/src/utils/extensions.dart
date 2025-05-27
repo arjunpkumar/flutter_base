@@ -9,14 +9,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_base/config.dart';
 import 'package:flutter_base/src/core/app_constants.dart';
-import 'package:flutter_base/src/utils/file_util.dart';
 import 'package:flutter_base/src/utils/guard.dart';
 import 'package:flutter_base/src/utils/regex_util.dart';
 import 'package:flutter_base/src/utils/string_utils.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:mime/mime.dart';
-import 'package:path/path.dart' as p;
+import 'package:rxdart/rxdart.dart';
 
 bool notNull(dynamic source) {
   return source != null;
@@ -26,17 +25,21 @@ String extractName(String? firstName, String? lastName) {
   return [firstName, lastName].where(notNull).join(" ");
 }
 
-String getInitials(List<String?>? inputs) {
+String getInitials(List<String?>? inputs, {int? maxLength}) {
   if (inputs == null || inputs.isEmpty) {
     return '';
   }
-
-  return inputs
+  String initials = inputs
       .map((i) => i?.trim())
       .where((i) => StringUtils.isNotNullAndEmpty(i))
       .map((s) => s!.substring(0, 1))
       .join()
       .toUpperCase();
+  if (maxLength != null && initials.length > maxLength) {
+    initials = initials.substring(0, maxLength);
+  }
+
+  return initials;
 }
 
 class IndexWalker {
@@ -184,31 +187,6 @@ String? durationInDaysHoursMinutes(DateTime? fromTime, DateTime? toTime) {
     if (duration.inMinutes.remainder(60) > 0)
       "${duration.inMinutes.remainder(60)}min",
   ].join(" ");
-}
-
-Future<String> absolutePath(
-  String relativePath, {
-  bool useCache = false,
-  bool useExternal = false,
-  bool useDownload = false,
-}) async {
-  final path = useCache
-      ? await FileUtil.getApplicationTempPath()
-      : useExternal
-          ? await FileUtil.getExternalPath()
-          : useDownload
-              ? await FileUtil.getDownloadPath()
-              : await FileUtil.getApplicationPath();
-  return p.joinAll([path, relativePath]);
-}
-
-Future<void> createDir(String basePath) async {
-  final path = await absolutePath(basePath);
-  final dir = Directory(path);
-  final exists = await dir.exists();
-  if (!exists) {
-    await dir.create(recursive: true);
-  }
 }
 
 DateTime today() {
@@ -442,6 +420,12 @@ extension ListUtil on List {
       if (!list.contains(element)) return false;
     }
     return true;
+  }
+}
+
+extension StreamUtil<T> on Stream<T> {
+  Stream<S> mapWithDefault<S>(S Function(T event) convert, S value) {
+    return map(convert).distinct().startWith(value);
   }
 }
 

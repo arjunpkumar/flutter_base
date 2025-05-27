@@ -38,7 +38,7 @@ class InAppUpdate {
   /// Performs an immediate update that is entirely handled by the Play API.
   ///
   /// [checkForUpdate] has to be called first to be able to run this.
-  static Future<void> performImmediateUpdate() async {
+  static Future<void> performImmediateUpdate() {
     return _channel.invokeMethod('performImmediateUpdate');
   }
 
@@ -49,13 +49,13 @@ class InAppUpdate {
   /// [completeFlexibleUpdate] can be called to install the update.
   ///
   /// [checkForUpdate] has to be called first to be able to run this.
-  static Future<void> startFlexibleUpdate() async {
+  static Future<void> startFlexibleUpdate() {
     return _channel.invokeMethod('startFlexibleUpdate');
   }
 
   /// Installs the update downloaded via [startFlexibleUpdate].
   /// [startFlexibleUpdate] has to be completed successfully.
-  static Future<void> completeFlexibleUpdate() async {
+  static Future<void> completeFlexibleUpdate() {
     return _channel.invokeMethod('completeFlexibleUpdate');
   }
 }

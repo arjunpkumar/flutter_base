@@ -42,7 +42,7 @@ class UserRepository {
     await userDao.saveUser(user);
   }
 
-  Future<User?> getCurrentUser() async {
+  Future<User?> getCurrentUser() {
     return userDao.getCurrentUser();
   }
 
@@ -54,7 +54,7 @@ class UserRepository {
     return userDao.watchGetActiveUser();
   }
 
-  Future<void> deleteUsers() async {
+  Future<void> deleteUsers() {
     return userDao.deleteUsers();
   }
 }

@@ -4,7 +4,6 @@ import 'package:flutter_base/src/application/core/base_bloc_state.dart';
 /// File Name : home_state
 /// Project : FlutterBase
 
-
 class HomeState extends BaseBlocState {
   String dummy = "";
 

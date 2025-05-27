@@ -6,7 +6,7 @@ class SettingsDao extends BaseHiveDao {
   static const kUserSecurity = 'user_security';
   static const kInitialFetch = 'initial_fetch';
 
-  Future<Box> getBox() async {
+  Future<Box> getBox() {
     return Hive.openBox("settings");
   }
 

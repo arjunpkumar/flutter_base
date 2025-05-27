@@ -18,7 +18,7 @@ class DeviceTokenHelper {
     try {
       final isSimulator = await isDeviceIOSSimulator();
       if (!isSimulator) {
-        await deviceTokenRepository.registerToken(userID: user!.id);
+        await deviceTokenRepository.registerToken(userID: user.id);
         Logger().log(LogEvents.deviceRegistration, null);
       }
     } catch (err) {

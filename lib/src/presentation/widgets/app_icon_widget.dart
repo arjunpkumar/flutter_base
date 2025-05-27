@@ -1,10 +1,8 @@
-
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter_base/src/core/app_constants.dart';
 import 'package:flutter_base/src/utils/extensions.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+
 /// Created by Jemsheer K D on 11 March, 2025.
 /// File Name : app_icon_widget
 /// Project : FlutterBase
@@ -66,20 +64,20 @@ class AppIconButton extends StatelessWidget {
             child: Center(
               child: iconPath != null
                   ? SizedBox(
-                width: iconSize,
-                height: iconSize,
-                child: SvgPicture.asset(
-                  iconPath!,
-                  height: iconSize,
-                  width: iconSize,
-                  colorFilter: color.toColorFilter(),
-                ),
-              )
+                      width: iconSize,
+                      height: iconSize,
+                      child: SvgPicture.asset(
+                        iconPath!,
+                        height: iconSize,
+                        width: iconSize,
+                        colorFilter: color.toColorFilter(),
+                      ),
+                    )
                   : Icon(
-                icon,
-                size: iconSize,
-                color: color,
-              ),
+                      icon,
+                      size: iconSize,
+                      color: color,
+                    ),
             ),
           ),
         ),

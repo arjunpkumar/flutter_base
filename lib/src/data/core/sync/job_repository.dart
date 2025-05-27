@@ -6,7 +6,6 @@ import 'package:flutter_base/src/data/database/job_dao.dart';
 /// File Name : job_repository
 /// Project : FlutterBase
 
-
 class JobRepository {
   JobRepository._();
 
@@ -21,7 +20,7 @@ class JobRepository {
     return instance!;
   }
 
-  Future<void> createSyncJob(Job job) async {
+  Future<void> createSyncJob(Job job) {
     return dao.createJob(job);
   }
 
@@ -59,9 +58,9 @@ class JobRepository {
   }
 
   Stream<List<Job>> watchJobListByTypeList(
-      List<String> jobTypeList,
-      String userId,
-      ) {
+    List<String> jobTypeList,
+    String userId,
+  ) {
     return dao.getJobListByTypeList(userId, jobTypeList);
   }
 
@@ -81,14 +80,14 @@ class JobRepository {
     return dao.markFailedJobsAsPending(userId);
   }
 
-  Future<int> getRemainingJobCount(String userId) async {
+  Future<int> getRemainingJobCount(String userId) {
     return dao.getRemainingJobCount(userId);
   }
 
   Future<int> getRemainingJobCountByStatus({
     required String userId,
     required String status,
-  }) async {
+  }) {
     return dao.getRemainingJobCountByStatus(userId: userId, status: status);
   }
 

@@ -7,12 +7,12 @@ import 'package:flutter_base/src/application/bloc/web_view/web_view_bloc.dart';
 import 'package:flutter_base/src/application/bloc/web_view/web_view_event.dart';
 import 'package:flutter_base/src/application/bloc/web_view/web_view_state.dart';
 import 'package:flutter_base/src/application/core/process_state.dart';
+import 'package:flutter_base/src/presentation/core/app_page.dart';
 import 'package:flutter_base/src/presentation/core/base_state.dart';
 import 'package:flutter_base/src/presentation/core/theme/colors.dart';
 import 'package:flutter_base/src/presentation/widgets/dialog/app_dialog.dart';
 import 'package:flutter_base/src/presentation/widgets/loader_widget.dart';
 import 'package:flutter_base/src/utils/extensions.dart';
-import 'package:flutter_base/src/utils/file_util.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -25,10 +25,10 @@ class WebViewPage extends StatefulWidget {
   const WebViewPage({super.key});
 
   @override
-  State<WebViewPage> createState() => _WebViewPageState();
+  State<WebViewPage> createState() => _WebViewState();
 }
 
-class _WebViewPageState extends BaseState<WebViewPage> {
+class _WebViewState extends BaseState<WebViewPage> {
   WebViewBloc? _bloc;
 
   WebViewController? _controller;
@@ -39,6 +39,14 @@ class _WebViewPageState extends BaseState<WebViewPage> {
 
     if (_bloc == null) {
       _bloc = BlocProvider.of<WebViewBloc>(context);
+
+      _bloc!.eventStream.listen(
+        (event) {
+          if (event.pagePopped && mounted) {
+            Navigator.pop(context, event.url);
+          }
+        },
+      );
 
       _bloc!.stream.listen(
         (state) {
@@ -110,7 +118,7 @@ class _WebViewPageState extends BaseState<WebViewPage> {
                       }
                     }
                   },
-                  onPageStarted: (url) async {
+                  onPageStarted: (url) {
                     if (_bloc!.isHeaderRequired && url != _bloc!.currentUrl) {
                       _bloc!.currentUrl = url;
                       _controller?.loadRequest(
@@ -180,11 +188,7 @@ class _WebViewPageState extends BaseState<WebViewPage> {
   Widget build(BuildContext context) {
     return BlocConsumer<WebViewBloc, WebViewState>(
       bloc: _bloc,
-      listener: (context, state) {
-        if (state is PagePopped) {
-          Navigator.pop(this.context, state.url);
-        }
-      },
+      listener: (context, state) {},
       builder: (context, state) {
         return PopScope(
           canPop: state.canPop,
@@ -218,16 +222,15 @@ class _WebViewPageState extends BaseState<WebViewPage> {
               }
             }
           },
-          child: Scaffold(
-            appBar: AppBar(
-              title: Text(
-                _bloc!.title.toUpperCase(),
-                style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                      color: AppColors.white,
-                    ),
-              ),
-            ),
-            body: _getBodyLayout(context, state),
+          child: AppPage(
+            key: Key("App_Page_WebView_${_bloc!.title}"),
+            title: _bloc!.title.toUpperCase(),
+            isBackOrHamburgerRequired: true,
+            initStateStream:
+                _bloc!.stream.map((state) => state.isInitCompleted),
+            processStateStream: _bloc!.stream.map((s) => s.processState),
+            retryOnTap: () {},
+            child: _getBodyLayout(context, state),
           ),
         );
       },
@@ -286,7 +289,7 @@ class _WebViewPageState extends BaseState<WebViewPage> {
       return [];
     }
 
-    final path = FileUtil.getProcessedFileUri(xFile.path);
+    final path = _bloc!.fileUtil.getProcessedFileUri(xFile.path);
     return [path];
   }
 }

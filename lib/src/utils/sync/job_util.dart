@@ -28,7 +28,7 @@ class JobUtils {
     }
   }
 
-  Future<List<Job>> getPendingJobListByType(String type, String userId) async {
+  Future<List<Job>> getPendingJobListByType(String type, String userId) {
     return jobRepository.getJobListByType(type, userId);
   }
 

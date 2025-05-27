@@ -12,12 +12,16 @@ class Guard {
     T Function() fun, {
     required T defaultValue,
     Function(Object, StackTrace)? onError,
+    bool canSkipErrorLog = false,
+    String? prefix,
   }) {
     try {
       return fun();
     } catch (e, s) {
-      debugPrint(e.toString());
-      ErrorLogger().recordError(exception: e, stackTrace: s);
+      debugPrint(prefix != null ? "$prefix: $e" : e.toString());
+      if (!canSkipErrorLog) {
+        ErrorLogger().recordError(exception: e, stackTrace: s);
+      }
       onError?.call(e, s);
     }
     return defaultValue;
@@ -26,12 +30,16 @@ class Guard {
   static T? asNullable<T>(
     T? Function() fun, {
     Function(Object, StackTrace)? onError,
+    bool canSkipErrorLog = false,
+    String? prefix,
   }) {
     try {
       return fun();
     } catch (e, s) {
-      debugPrint(e.toString());
-      ErrorLogger().recordError(exception: e, stackTrace: s);
+      debugPrint(prefix != null ? "$prefix: $e" : e.toString());
+      if (!canSkipErrorLog) {
+        ErrorLogger().recordError(exception: e, stackTrace: s);
+      }
       onError?.call(e, s);
     }
     return null;
@@ -40,12 +48,16 @@ class Guard {
   static Future<T?> asNullableAsync<T>(
     Future<T?> Function() fun, {
     Function(Object, StackTrace)? onError,
+    bool canSkipErrorLog = false,
+    String? prefix,
   }) async {
     try {
-      return fun();
+      return await fun();
     } catch (e, s) {
-      debugPrint(e.toString());
-      ErrorLogger().recordError(exception: e, stackTrace: s);
+      debugPrint(prefix != null ? "$prefix: $e" : e.toString());
+      if (!canSkipErrorLog) {
+        ErrorLogger().recordError(exception: e, stackTrace: s);
+      }
       onError?.call(e, s);
     }
     return null;
@@ -55,12 +67,16 @@ class Guard {
     Future<T> Function() fun, {
     required T defaultValue,
     Function(Object, StackTrace)? onError,
+    bool canSkipErrorLog = false,
+    String? prefix,
   }) async {
     try {
-      return fun();
+      return await fun();
     } catch (e, s) {
-      debugPrint(e.toString());
-      ErrorLogger().recordError(exception: e, stackTrace: s);
+      debugPrint(prefix != null ? "$prefix: $e" : e.toString());
+      if (!canSkipErrorLog) {
+        ErrorLogger().recordError(exception: e, stackTrace: s);
+      }
       onError?.call(e, s);
     }
     return defaultValue;
@@ -69,12 +85,16 @@ class Guard {
   static void run(
     Function() fun, {
     Function(Object, StackTrace)? onError,
+    bool canSkipErrorLog = false,
+    String? prefix,
   }) {
     try {
       fun();
     } catch (e, s) {
-      debugPrint(e.toString());
-      ErrorLogger().recordError(exception: e, stackTrace: s);
+      debugPrint(prefix != null ? "$prefix: $e" : e.toString());
+      if (!canSkipErrorLog) {
+        ErrorLogger().recordError(exception: e, stackTrace: s);
+      }
       onError?.call(e, s);
     }
   }
@@ -82,12 +102,16 @@ class Guard {
   static Future<void> runAsync(
     Function() fun, {
     Function(Object, StackTrace)? onError,
+    bool canSkipErrorLog = false,
+    String? prefix,
   }) async {
     try {
       await fun();
     } catch (e, s) {
-      debugPrint(e.toString());
-      ErrorLogger().recordError(exception: e, stackTrace: s);
+      debugPrint(prefix != null ? "$prefix: $e" : e.toString());
+      if (!canSkipErrorLog) {
+        ErrorLogger().recordError(exception: e, stackTrace: s);
+      }
       onError?.call(e, s);
     }
   }

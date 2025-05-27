@@ -1,0 +1,11 @@
+targets:
+  $default:
+    builders:
+      drift_dev|drift_dev:
+        generate_for:
+          # Example: Only process files in the 'lib/' directory
+          - "lib/src/data/database/**.dart"
+          # Example: Exclude files within 'lib/src/generated/' even if lib/ is included
+          - "!lib/generated/**.dart"
+#      mockito:mockBuilder:
+#        enabled: false

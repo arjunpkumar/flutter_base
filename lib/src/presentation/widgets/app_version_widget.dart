@@ -27,11 +27,11 @@ class UpdateInfo {
 
 class AppVersionWidget extends StatefulWidget {
   final Widget child;
-  final ConfigRepository configsRepository;
+  final ConfigRepository configRepository;
 
   const AppVersionWidget({
     super.key,
-    required this.configsRepository,
+    required this.configRepository,
     required this.child,
   });
 
@@ -52,7 +52,7 @@ class _AppVersionWidgetState extends State<AppVersionWidget> {
     return widget.child;
   }
 
-  Future<bool> isNotificationsEnabled() async {
+  Future<bool> isNotificationsEnabled() {
     return Permission.notification.isGranted;
   }
 
@@ -68,7 +68,7 @@ class _AppVersionWidgetState extends State<AppVersionWidget> {
   Future<void> checkForUpdatesIfNeeded() async {
     final shouldCheck = await shouldCheckForUpdates();
     if (shouldCheck) {
-      widget.configsRepository.initConfig();
+      widget.configRepository.initConfig();
 
       final info = await getVersionUpdateInfo();
       await Future.delayed(const Duration(seconds: 1));
@@ -196,7 +196,7 @@ class _AppVersionWidgetState extends State<AppVersionWidget> {
                 ),
                 actions: <Widget>[
                   TextButton(
-                    onPressed: () async {
+                    onPressed: () {
                       ignoreVersion(info.updateVersion)
                           .then((value) => Navigator.pop(context));
                     },
@@ -243,7 +243,7 @@ class _AppVersionWidgetState extends State<AppVersionWidget> {
 
   String getImmediateUpdateTitle() {
     try {
-      return widget.configsRepository.immediateUpdateTitle;
+      return widget.configRepository.immediateUpdateTitle;
     } catch (err) {
       return S.current.titleImmediateUpdate;
     }
@@ -251,7 +251,7 @@ class _AppVersionWidgetState extends State<AppVersionWidget> {
 
   String getImmediateUpdateMessage() {
     try {
-      return widget.configsRepository.immediateUpdateMessage;
+      return widget.configRepository.immediateUpdateMessage;
     } catch (err) {
       return S.current.messageImmediateUpdate;
     }
@@ -259,7 +259,7 @@ class _AppVersionWidgetState extends State<AppVersionWidget> {
 
   String getFlexibleUpdateTitle() {
     try {
-      return widget.configsRepository.flexibleUpdateTitle;
+      return widget.configRepository.flexibleUpdateTitle;
     } catch (err) {
       debugPrint(err.toString());
       return S.current.titleFlexibleUpdate;
@@ -268,7 +268,7 @@ class _AppVersionWidgetState extends State<AppVersionWidget> {
 
   String getFlexibleUpdateMessage() {
     try {
-      return widget.configsRepository.flexibleUpdateMessage;
+      return widget.configRepository.flexibleUpdateMessage;
     } catch (err) {
       debugPrint(err.toString());
       return S.current.messageFlexibleUpdate;

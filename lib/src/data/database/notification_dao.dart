@@ -29,7 +29,9 @@ class NotificationDao extends DatabaseAccessor<AppDatabase>
       return (select(notifications)
             ..orderBy([
               (t) => OrderingTerm(
-                  expression: t.updatedAt, mode: OrderingMode.desc,),
+                    expression: t.updatedAt,
+                    mode: OrderingMode.desc,
+                  ),
             ])
             ..limit(batchSize))
           .get();
@@ -38,7 +40,9 @@ class NotificationDao extends DatabaseAccessor<AppDatabase>
             ..where((t) => t.updatedAt.isSmallerThanValue(until))
             ..orderBy([
               (t) => OrderingTerm(
-                  expression: t.updatedAt, mode: OrderingMode.desc,),
+                    expression: t.updatedAt,
+                    mode: OrderingMode.desc,
+                  ),
             ])
             ..limit(batchSize))
           .get();
@@ -60,7 +64,7 @@ class NotificationDao extends DatabaseAccessor<AppDatabase>
     }
   }
 
-  Future<int?> getNotificationCount() async {
+  Future<int?> getNotificationCount() {
     final countExp = notifications.id.count();
     final query = selectOnly(notifications)..addColumns([countExp]);
     return query.map((row) => row.read(countExp)).getSingleOrNull();

@@ -4,7 +4,6 @@ import 'package:flutter_base/src/application/core/base_bloc_event.dart';
 /// File Name : home_event
 /// Project : FlutterBase
 
-
 class HomeEvent extends BaseBlocEvent {}
 
 class HomeInit extends HomeEvent {}

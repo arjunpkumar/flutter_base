@@ -1,15 +1,11 @@
-/// Created by Jemsheer K D on 21 February, 2025.
-/// File Name : home_bloc
-/// Project : FlutterBase
-
 import 'package:flutter_base/src/application/bloc/home/home_event.dart';
 import 'package:flutter_base/src/application/bloc/home/home_state.dart';
 import 'package:flutter_base/src/application/core/base_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-/// Created by Jemsheer K D on 11 May, 2024.
-/// File Name : home
-/// Project : WilsonParking
+/// Created by Jemsheer K D on 21 February, 2025.
+/// File Name : home_bloc
+/// Project : FlutterBase
 
 class HomeBloc extends BaseBloc<HomeEvent, HomeState, HomeUIEvent> {
   HomeBloc() : super(HomeState()) {
@@ -29,6 +25,4 @@ class HomeBloc extends BaseBloc<HomeEvent, HomeState, HomeUIEvent> {
   HomeUIEvent get getEvent => HomeUIEvent();
 }
 
-class HomeUIEvent extends BaseUIEvent {
-
-}
+class HomeUIEvent extends BaseUIEvent {}

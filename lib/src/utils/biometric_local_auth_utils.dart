@@ -14,7 +14,7 @@ class BiometricLocalAuthUtils {
     required this.deviceInfoPlugin,
   });
 
-  Future<bool> isDeviceSupported() async {
+  Future<bool> isDeviceSupported() {
     return localAuthentication.isDeviceSupported();
   }
 
@@ -22,7 +22,7 @@ class BiometricLocalAuthUtils {
     await AppSettings.openAppSettings(type: AppSettingsType.security);
   }
 
-  Future<bool> authenticate() async {
+  Future<bool> authenticate() {
     if (Platform.isAndroid) {
       return authenticateUserInAndroid();
     }
@@ -41,7 +41,7 @@ class BiometricLocalAuthUtils {
     }
   }
 
-  Future<bool> authenticateUser({bool biometricOnly = false}) async {
+  Future<bool> authenticateUser({bool biometricOnly = false}) {
     return localAuthentication.authenticate(
       localizedReason: S.current.messagePleaseAuthenticateUsingBiometric,
       options: AuthenticationOptions(
@@ -52,7 +52,7 @@ class BiometricLocalAuthUtils {
     );
   }
 
-  Future<bool> cancelAuthentication() async {
+  Future<bool> cancelAuthentication() {
     return localAuthentication.stopAuthentication();
   }
 }

@@ -3,20 +3,16 @@ import 'package:drift/drift.dart';
 import 'package:drift/wasm.dart';
 import 'package:drift/web.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_base/src/data/database/core/app_database.dart';
 
-AppDatabase constructDb() {
+QueryExecutor constructDb() {
   try {
-    return AppDatabase(_connectOnWeb());
+    return _connectOnWeb();
   } catch (e) {
     debugPrint("alternate DB $e");
-    return AppDatabase(
-      LazyDatabase(() async {
-        final storage = await DriftWebStorage.indexedDbIfSupported('db');
-        return WebDatabase.withStorage(storage);
-      }),
-    );
+    return LazyDatabase(() async {
+      final storage = await DriftWebStorage.indexedDbIfSupported('db');
+      return WebDatabase.withStorage(storage);
+    });
   }
 }
 
@@ -27,10 +23,12 @@ DatabaseConnection _connectOnWeb() {
         databaseName: 'db', // prefer to only use valid identifiers here
         sqlite3Uri: Uri.parse('sql-wasm.wasm'),
         driftWorkerUri: Uri.parse('sql-wasm.js'),
-        initializeDatabase: () async {
+        /*initializeDatabase: () {
+          return Guard.asNullableAsync(() async {
           final data = await rootBundle.load('db');
           return data.buffer.asUint8List();
-        },
+          });
+        },*/
       );
       if (result.missingFeatures.isNotEmpty) {
         // Depending how central local persistence is to your app, you may want

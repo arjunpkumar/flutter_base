@@ -9,7 +9,7 @@ import 'package:hive/hive.dart';
 class RemoteConfigDao extends BaseHiveDao {
   static const kRemoteConfig = 'remote_config';
 
-  Future<Box> getBox() async {
+  Future<Box> getBox() {
     return Hive.openBox("remote_config");
   }
 

@@ -7,6 +7,7 @@ import 'package:flutter_base/config.dart';
 import 'package:flutter_base/generated/l10n.dart';
 import 'package:flutter_base/src/core/app_constants.dart';
 import 'package:flutter_base/src/presentation/core/theme/text_styles.dart';
+import 'package:flutter_base/src/utils/guard.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
 import 'package:path/path.dart' as p;
@@ -15,13 +16,19 @@ import 'package:path_provider/path_provider.dart';
 enum DocumentSource { image, document, audio }
 
 class FileUtil {
+  static FileUtil? instance;
   final ImagePicker imagePicker;
 
   FileUtil({
     required this.imagePicker,
   });
 
-  static String _getFlavorPath() {
+  @visibleForTesting
+  factory FileUtil.fromMock(FileUtil util) {
+    return instance = util;
+  }
+
+  String _getFlavorPath() {
     switch (Config.appFlavor) {
       case Staging _:
         return " Stage";
@@ -35,47 +42,55 @@ class FileUtil {
     }
   }
 
-  static Future<String> getApplicationPath() async {
-    final documentsDirectory = await getApplicationDocumentsDirectory();
-    final path = !kIsWeb && Platform.isWindows
-        ? p.join(documentsDirectory.path, "/FlutterBase${_getFlavorPath()}")
-        : documentsDirectory.path;
-    final directory = Directory(path);
-    if (!await directory.exists()) await directory.create(recursive: true);
-    return path;
+  Future<String> getApplicationPath() {
+    return Guard.withDefaultAsync(
+      () async {
+        final documentsDirectory = await getApplicationDocumentsDirectory();
+        final path = !kIsWeb && Platform.isWindows
+            ? p.join(documentsDirectory.path, "FlutterBase${_getFlavorPath()}")
+            : documentsDirectory.path;
+        final directory = Directory(path);
+        if (!await directory.exists()) await directory.create(recursive: true);
+        return path;
+      },
+      defaultValue: '',
+    );
   }
 
-  static Future<String> getApplicationTempPath() async {
+  Future<String> getApplicationTempPath() async {
     final documentsDirectory = await getApplicationCacheDirectory();
     final path = !kIsWeb && Platform.isWindows
-        ? p.join(documentsDirectory.path, "/FlutterBase${_getFlavorPath()}/Cache")
+        ? p.join(
+            documentsDirectory.path, "FlutterBase${_getFlavorPath()}/Cache")
         : documentsDirectory.path;
     final directory = Directory(path);
     if (!await directory.exists()) await directory.create(recursive: true);
     return path;
   }
 
-  static Future<String> getExternalPath() async {
+  Future<String> getExternalPath() async {
     final documentsDirectory = await getExternalStorageDirectory();
     final path = !kIsWeb && Platform.isWindows
-        ? p.join(documentsDirectory!.path, "Flutter Base${_getFlavorPath()}/Cache")
+        ? p.join(
+            documentsDirectory!.path, "Flutter Base${_getFlavorPath()}/Cache")
         : documentsDirectory!.path;
     final directory = Directory(path);
     if (!await directory.exists()) await directory.create(recursive: true);
     return path;
   }
 
-  static Future<String> getDownloadPath() async {
+  Future<String> getDownloadPath() async {
     final documentsDirectory = await getDownloadsDirectory();
     final path = !kIsWeb && Platform.isWindows
-        ? p.join(documentsDirectory!.path, "Flutter Base${_getFlavorPath()}/Cache")
+        ? p.join(
+            documentsDirectory!.path, "Flutter Base${_getFlavorPath()}/Cache")
         : documentsDirectory!.path;
     final directory = Directory(path);
     if (!await directory.exists()) await directory.create(recursive: true);
     return path;
   }
 
-  static String getPathPrefix({
+  String getPathPrefix({
     required String cdcNumber,
     String? module,
   }) {
@@ -85,7 +100,16 @@ class FileUtil {
     ]);
   }
 
-  Future<void> createDirectory(String newPath) async {
+  Future<void> createDir(String basePath) async {
+    final path = await absolutePath(basePath);
+    final dir = Directory(path);
+    final exists = await dir.exists();
+    if (!exists) {
+      await dir.create(recursive: true);
+    }
+  }
+
+  Future<void> createDirectoryFromPath(String newPath) async {
     final newDirectoryPath = p.dirname(newPath);
     final newDirectory = Directory(newDirectoryPath);
     final isDirExists = await newDirectory.exists();
@@ -94,8 +118,24 @@ class FileUtil {
     }
   }
 
+  Future<String> absolutePath(
+    String relativePath, {
+    bool useCache = false,
+    bool useExternal = false,
+    bool useDownload = false,
+  }) async {
+    final path = useCache
+        ? await getApplicationTempPath()
+        : useExternal
+            ? await getExternalPath()
+            : useDownload
+                ? await getDownloadPath()
+                : await getApplicationPath();
+    return p.joinAll([path, relativePath]);
+  }
+
   Future<File> moveFile(File sourceFile, String newPath) async {
-    await createDirectory(newPath);
+    await createDirectoryFromPath(newPath);
     try {
       // prefer using rename as it is probably faster
       return await sourceFile.rename(newPath);
@@ -108,7 +148,7 @@ class FileUtil {
   }
 
   Future<File> copyFile(File sourceFile, String newPath) async {
-    await createDirectory(newPath);
+    await createDirectoryFromPath(newPath);
     final newFile = await sourceFile.copy(newPath);
     return newFile;
   }
@@ -118,11 +158,15 @@ class FileUtil {
     return file.length().toString();
   }
 
-  static String getContentType(File file) {
+  String getContentType(File file) {
     return lookupMimeType(file.path) ?? "text/plain";
   }
 
-  static String getProcessedFileUri(String path) {
+  String getContentTypeFromXFile(XFile file) {
+    return lookupMimeType(file.path) ?? "text/plain";
+  }
+
+  String getProcessedFileUri(String path) {
     if (!path.startsWith("file://")) {
       return "file://$path";
     }
@@ -156,25 +200,28 @@ class FileUtil {
     bool isImageOnly = false,
     bool isAudioOnly = false,
     bool isPdfOnly = false,
-  }) async {
-    final source = await _getDocumentSource(context, isImageOnly, isAudioOnly);
+  }) {
+    return Guard.asNullableAsync<File>(() async {
+      final source =
+          await _getDocumentSource(context, isImageOnly, isAudioOnly);
 
-    XFile? xFile;
-    if (source == DocumentSource.image) {
-      xFile = await ImagePicker().pickImage(
-        source: ImageSource.gallery,
-      );
-    } else if (source == DocumentSource.document) {
-      xFile = await _documentPickerXFile(
-        isPdfOnly: isPdfOnly,
-      );
-    } else if (source == DocumentSource.audio) {
-      xFile = await _documentPickerXFile(isAudioOnly: true);
-    }
-    if (xFile != null) {
-      return File(xFile.path);
-    }
-    return null;
+      XFile? xFile;
+      if (source == DocumentSource.image) {
+        xFile = await ImagePicker().pickImage(
+          source: ImageSource.gallery,
+        );
+      } else if (source == DocumentSource.document) {
+        xFile = await _documentPickerXFile(
+          isPdfOnly: isPdfOnly,
+        );
+      } else if (source == DocumentSource.audio) {
+        xFile = await _documentPickerXFile(isAudioOnly: true);
+      }
+      if (xFile != null) {
+        return File(xFile.path);
+      }
+      return null;
+    });
   }
 
   Future<XFile?> openDocumentPickerXFile(
@@ -247,7 +294,7 @@ class FileUtil {
     bool isImageOnly = false,
     bool isAudioOnly = false,
     bool isPdfOnly = false,
-  }) async {
+  }) {
     return openFile(
       acceptedTypeGroups: getTypeGroups(isImageOnly, isAudioOnly, isPdfOnly),
     );

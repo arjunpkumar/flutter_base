@@ -147,7 +147,7 @@ class _AppPageState extends BaseState<AppPage> {
         if (processState.status == ProcessStatus.busy)
           AbsorbPointer(
             child: ColoredBox(
-              color: AppColors.black.withOpacity(.5),
+              color: AppColors.black.setOpacity(.5),
               child: const LoaderWidget(),
             ),
           ),

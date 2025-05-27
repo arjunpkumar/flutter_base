@@ -2,13 +2,11 @@ import 'package:flutter_base/src/application/core/base_bloc_state.dart';
 
 class WebViewState extends BaseBlocState {
   Map<String, String>? headers;
-  bool isInitCompleted = false;
   bool isControllerInitiated = false;
   bool isPageLoading = false;
 
   WebViewState({
     this.headers,
-    this.isInitCompleted = false,
     this.isControllerInitiated = false,
     this.isPageLoading = false,
   });
@@ -16,7 +14,6 @@ class WebViewState extends BaseBlocState {
   @override
   WebViewState copyWith({
     Map<String, String>? headers,
-    bool? isInitCompleted,
     bool? isControllerInitiated,
     bool? isPageLoading,
   }) {
@@ -24,9 +21,11 @@ class WebViewState extends BaseBlocState {
       headers: headers ?? this.headers,
       isControllerInitiated:
           isControllerInitiated ?? this.isControllerInitiated,
-      isInitCompleted: isInitCompleted ?? this.isInitCompleted,
       isPageLoading: isPageLoading ?? this.isPageLoading,
-    );
+    )
+      ..isInitCompleted = isInitCompleted
+      ..canPop = canPop
+      ..processState = processState;
   }
 }
 

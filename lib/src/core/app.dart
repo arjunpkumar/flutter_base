@@ -20,12 +20,12 @@ import 'package:flutter_base/src/core/routes.dart';
 import 'package:flutter_base/src/data/core/config_repository.dart';
 import 'package:flutter_base/src/data/core/log_services.dart';
 import 'package:flutter_base/src/data/core/repository_provider.dart';
+import 'package:flutter_base/src/data/database/core/app_database.dart';
 import 'package:flutter_base/src/presentation/core/theme/text_styles.dart';
 import 'package:flutter_base/src/presentation/widgets/app_version_widget.dart';
 import 'package:flutter_base/src/utils/deeplink_handler.dart';
 import 'package:flutter_base/src/utils/deeplink_navigator.dart';
 import 'package:flutter_base/src/utils/error_logger.dart';
-import 'package:flutter_base/src/utils/file_util.dart';
 import 'package:flutter_base/src/utils/guard.dart';
 import 'package:flutter_base/src/utils/notifications_handler.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -35,9 +35,11 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+RootIsolateToken? rootIsolateToken;
 
 Future<void> _init() async {
   WidgetsFlutterBinding.ensureInitialized();
+  rootIsolateToken = RootIsolateToken.instance;
 
   if (kIsWeb || Platform.isWindows || Platform.isMacOS) {
     await Firebase.initializeApp(
@@ -48,13 +50,13 @@ Future<void> _init() async {
     FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
   }
 
+  await AppDatabase.init(rootIsolateToken!);
+
   if (kIsWeb || !(Platform.isWindows || Platform.isMacOS)) {
     await FirebaseRemoteConfig.instance.ensureInitialized();
   }
 
-  if (!kIsWeb) {
-    Hive.init(await FileUtil.getApplicationPath());
-  }
+  Hive.init(await provideFileUtil().getApplicationPath());
 
   // Disable DebugPrint in Release Mode
   if (Config.appMode == AppMode.release) {
@@ -82,17 +84,17 @@ Future<void> _init() async {
   // Sync Configs
   await Guard.runAsync(
     () async {
-      final configsRepository = ConfigRepository.instance();
+      final configRepository = ConfigRepository.instance();
 
       if (kIsWeb || !(Platform.isWindows || Platform.isMacOS)) {
-        await configsRepository.initConfig();
-        await configsRepository.syncConfig();
+        await configRepository.initConfig();
+        await configRepository.syncConfig();
       } else if (Platform.isWindows || Platform.isMacOS) {
         await provideRemoteConfigRepository().fetchAndUpdateRemoteConfigList();
       }
     },
     onError: (e, s) async {
-      Guard.runAsync(() async {
+      await Guard.runAsync(() async {
         await provideRemoteConfigRepository().fetchAndUpdateRemoteConfigList();
       });
     },
@@ -108,7 +110,7 @@ Future<void> _init() async {
 }
 
 Future<void> initApp() async {
-  runZonedGuarded<Future<void>>(
+  await runZonedGuarded<Future<void>>(
     () async {
       await _init();
       runApp(App());
@@ -189,7 +191,7 @@ class _AppState extends State<App> with WidgetsBindingObserver {
                 return child!;
               }
               return AppVersionWidget(
-                configsRepository: ConfigRepository.instance(),
+                configRepository: ConfigRepository.instance(),
                 child: child!,
               );
             },
@@ -209,39 +211,43 @@ class _AppState extends State<App> with WidgetsBindingObserver {
           nameExtractor: (settings) => screenName(settings.name ?? "Other"),
         ),
       ],
-      theme: ThemeData(
-        textTheme: TextTheme(
-          displayLarge: TextStyles.h1ExtraLight(context),
-          displayMedium: TextStyles.h2ExtraLight(context),
-          displaySmall: TextStyles.h2Light(context),
-          headlineMedium: TextStyles.titleSemiBold(context),
-          titleLarge: TextStyles.title2Bold(context),
-          titleSmall: TextStyles.title3Bold(context),
-          titleMedium: TextStyles.title2Medium(context),
-          bodyMedium: TextStyles.body1Regular(context),
-          bodyLarge: TextStyles.body1Bold(context),
-          bodySmall: TextStyles.captionRegular(context),
-          labelSmall: TextStyles.captionBold(context),
-          labelLarge: TextStyles.buttonBlack(context),
-        ),
-        dialogTheme: DialogTheme(
-          titleTextStyle: Theme.of(context).textTheme.titleLarge,
-          contentTextStyle: Theme.of(context).textTheme.bodyMedium,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(Units.kCardBorderRadius),
-          ),
-        ),
-        cardTheme: CardTheme(
-          elevation: Units.kCardElevation,
-          color: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(Units.kCardBorderRadius),
-          ),
-        ),
-      ),
+      theme: _getThemeData(context),
       routes: routes,
       onGenerateRoute: (settings) => generatedRoutes(settings),
       scrollBehavior: AppScrollBehavior(),
+    );
+  }
+
+  ThemeData _getThemeData(BuildContext context) {
+    return ThemeData(
+      textTheme: TextTheme(
+        displayLarge: TextStyles.h1ExtraLight(context),
+        displayMedium: TextStyles.h2ExtraLight(context),
+        displaySmall: TextStyles.h2Light(context),
+        headlineMedium: TextStyles.titleSemiBold(context),
+        titleLarge: TextStyles.title2Bold(context),
+        titleSmall: TextStyles.title3Bold(context),
+        titleMedium: TextStyles.title2Medium(context),
+        bodyMedium: TextStyles.body1Regular(context),
+        bodyLarge: TextStyles.body1Bold(context),
+        bodySmall: TextStyles.captionRegular(context),
+        labelSmall: TextStyles.captionBold(context),
+        labelLarge: TextStyles.titleSemiBold(context),
+      ),
+      dialogTheme: DialogThemeData(
+        titleTextStyle: TextStyles.title2Bold(context),
+        contentTextStyle: TextStyles.body1Regular(context),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(Units.kCardBorderRadius),
+        ),
+      ),
+      cardTheme: CardThemeData(
+        elevation: Units.kCardElevation,
+        color: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(Units.kCardBorderRadius),
+        ),
+      ),
     );
   }
 
