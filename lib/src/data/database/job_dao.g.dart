@@ -58,4 +58,13 @@ mixin _$JobDaoMixin on DatabaseAccessor<AppDatabase> {
       updateKind: UpdateKind.update,
     );
   }
+
+  JobDaoManager get managers => JobDaoManager(this);
+}
+
+class JobDaoManager {
+  final _$JobDaoMixin _db;
+  JobDaoManager(this._db);
+  $$JobsTableTableManager get jobs =>
+      $$JobsTableTableManager(_db.attachedDatabase, _db.jobs);
 }
